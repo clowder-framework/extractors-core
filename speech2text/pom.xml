@@ -1,14 +1,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<groupId>edu.illinois.ncsa.medici</groupId>
-	<artifactId>speech2text</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+  <groupId>edu.illinois.ncsa.medici</groupId>
+  <artifactId>speech2text</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+  <name>speech2text</name>
 
-	<properties>
-		<exec.mainClass>edu.illinois.ncsa.medici.extractor.audio.Speech2Text</exec.mainClass>
-	</properties>
+  <properties>
+    <exec.mainClass>edu.illinois.ncsa.medici.extractor.ExtractText</exec.mainClass>
+  </properties>
 
 	<build>
 		<plugins>
@@ -38,33 +40,15 @@
 			</plugin>
 		</plugins>
 	</build>
-    	<repositories>
-        	<repository>
-            		<id>snapshots-repo</id>
-            		<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            		<releases><enabled>false</enabled></releases>
-        	<snapshots><enabled>true</enabled></snapshots>
-        	</repository>
-    	</repositories>
+   <repositories>
+       <repository>
+           <id>snapshots-repo</id>
+           <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+           <releases><enabled>false</enabled></releases>
+          <snapshots><enabled>true</enabled></snapshots>
+       </repository>
+   </repositories>
 	<dependencies>
-		<dependency>
-  			<groupId>org.json</groupId>
-  			<artifactId>org.json</artifactId>
-  			<version>1.0.0</version>
-  			<scope>system</scope>
-  			<systemPath>${project.basedir}/src/main/resources/java-json.jar</systemPath>
-		</dependency>
-
-		<dependency>
-			<groupId>edu.cmu.sphinx</groupId>
-			<artifactId>sphinx4-core</artifactId>
-			<version>1.0-SNAPSHOT</version>
-		</dependency>
-		<dependency>
-  			<groupId>edu.cmu.sphinx</groupId>
-  			<artifactId>sphinx4-data</artifactId>
-  			<version>1.0-SNAPSHOT</version>
-		</dependency>
 		<dependency>
 			<groupId>com.rabbitmq</groupId>
 			<artifactId>amqp-client</artifactId>
@@ -91,5 +75,30 @@
 			<version>1.2.17</version>
 			<scope>runtime</scope>
 		</dependency>
+		<dependency>
+  			<groupId>edu.cmu.sphinx</groupId>
+ 			<artifactId>sphinx4-core</artifactId>
+ 			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			  <groupId>edu.cmu.sphinx</groupId>
+			  <artifactId>sphinx4-data</artifactId>
+			  <version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.json</groupId>
+		    <artifactId>json</artifactId>
+		    <version>20090211</version>
+		</dependency>
 	</dependencies>
+
 </project>
+
+
+
+
+
+
+
+
+

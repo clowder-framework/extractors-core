@@ -1,8 +1,3 @@
-# Status: 2014-12-19
-The extractor is working on a local install, but the maven install is not correctly placing all resources for cmusphinx.
-Current build will NOT work.
-
-
 # Requirements
 
 Speech2text requires java and maven.
@@ -23,7 +18,7 @@ or
 
 ```
 mvn package
-java -jar target/example-extractor-1.0.0-SNAPSHOT-jar-with-dependencies.jar
+java -jar target/speech2text-1.0.0-SNAPSHOT-jar-with-dependencies.jar
 ```
 
 # Editing the extractor

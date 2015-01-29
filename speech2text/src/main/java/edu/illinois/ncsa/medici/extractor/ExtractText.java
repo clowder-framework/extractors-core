@@ -1,4 +1,4 @@
-package edu.illinois.ncsa.medici.extractor.audio.speech2text;
+package edu.illinois.ncsa.medici.extractor;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -33,8 +33,8 @@ import edu.cmu.sphinx.api.SpeechResult;
 import edu.cmu.sphinx.api.StreamSpeechRecognizer;
 import edu.cmu.sphinx.result.WordResult;
 
-public class WavExtractor {
-    private static Log logger = LogFactory.getLog(WavExtractor.class);
+public class ExtractText {
+    private static Log logger = LogFactory.getLog(ExtractText.class);
 
     // ----------------------------------------------------------------------
     // BEGIN CONFIGURATION
@@ -89,7 +89,7 @@ public class WavExtractor {
             @Override
             public void handleDelivery(String consumerTag, Envelope envelope,
                     AMQP.BasicProperties header, byte[] body) throws IOException {
-                WavExtractor we = new WavExtractor();
+                ExtractText we = new ExtractText();
                 we.onMessage(channel, envelope.getDeliveryTag(), header, new String(body));
             }
         });
@@ -274,14 +274,23 @@ public class WavExtractor {
         statusUpdate(channel, header, fileid, "Processing audio file to text");        
 
         Configuration configuration = new Configuration();
-        
-        // Load model from the jar
-        configuration.setAcousticModelPath("resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz"); 
+	
+//	configuration.setSampleRate(8000)   Haven't used but curious about setting sample rate
+	
+	// Set path to acoustic model.
+	configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
+	// Set path to dictionary.
+	configuration.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
+	// Set language model.
+	configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.dmp");
+
+//        configuration.setAcousticModelPath("resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz"); 
+//	configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/acoustic/wsj/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz");
 //        configuration.setAcousticModelPath("resource:/WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz");        
-        configuration.setDictionaryPath("resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d");
+//       configuration.setDictionaryPath("resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d");
 //        configuration.setDictionaryPath("file:/home/marcuss/Desktop/software/sphinx4/sphinx4-5prealpha/models/acoustic/wsj/dict/cmudict.0.6d");
 //        //this is a text file dictionary with spelling and phonemes 
-        configuration.setLanguageModelPath("/home/marcuss/Desktop/workspace_sphinx/test_sphinx/models/en-us.lm.dmp");
+//        configuration.setLanguageModelPath("/home/marcuss/Desktop/workspace_sphinx/test_sphinx/models/en-us.lm.dmp");
 
         StreamSpeechRecognizer recognizer = 
             new StreamSpeechRecognizer(configuration);
