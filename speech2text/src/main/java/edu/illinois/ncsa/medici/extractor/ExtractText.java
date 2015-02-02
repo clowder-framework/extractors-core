@@ -6,6 +6,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.DateFormat;
@@ -14,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 import org.json.*;
 import org.apache.commons.io.FileUtils;
@@ -41,20 +45,20 @@ public class ExtractText {
     // ----------------------------------------------------------------------
 
     // name where rabbitmq is running
-    private static String rabbitmqhost = "localhost";
+    private static String rabbitmqHost; // = "localhost";
 
+    // name to show in rabbitmq queue list   
+    private static String exchange; // = "medici";
+    
     // name to show in rabbitmq queue list
-    private static String exchange = "medici";
-
-    // name to show in rabbitmq queue list
-    private static String extractorName = "audio2text";
+    private static String extractorName; // = "audio2text";
 
     // username and password to connect to rabbitmq
-    private static String username = null;
-    private static String password = null;
+    private static String username; // = null;
+    private static String password; // = null;
 
     // accept any type of file that is audio
-    private static String messageType = "*.file.audio.#";
+    private static String messageType; // = "*.file.audio.#";
     // ----------------------------------------------------------------------
     // END CONFIGURATION
     // ----------------------------------------------------------------------
@@ -66,9 +70,31 @@ public class ExtractText {
 /// MAIN /////////////////////////////////////////////////////////////////////    
     
     public static void main(String[] argv) throws Exception {
+    	// get config.properties
+    	Properties props = new Properties();
+    	FileInputStream inStream;
+    	try{
+    		inStream = new FileInputStream("config.properties");
+    		props.load(inStream);
+    		inStream.close();
+    	} catch (FileNotFoundException e) {
+    		e.printStackTrace();
+    	} catch (IOException e){
+    		e.printStackTrace();
+    	}
+    	
+    	rabbitmqHost = props.getProperty("rabbitmqHost");
+    	exchange = props.getProperty("exchange");
+    	extractorName = props.getProperty("extractorName");
+    	username = props.getProperty("rabbitmqUsername");
+    	if(username.equals("null")){username=null;}
+    	password = props.getProperty("rabbitmqPassword");
+    	if(password.equals("null")){password=null;}
+    	messageType = props.getProperty("messageType");
+    	  	     	    
         // setup connection parameters
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost(rabbitmqhost);
+        factory.setHost(rabbitmqHost);
         if ((username != null) && (password != null)) {
             factory.setUsername(username);
             factory.setPassword(password);
@@ -248,7 +274,7 @@ public class ExtractText {
 	        Process convertOut = Runtime.getRuntime().exec(convertCmd);
 	        outputFile = new File(outputFileName);
 		}
-		else if(fileType.equals("wav")){	//===NO CONVERTION
+		else if(fileType.equals("wav")){	
 			System.out.println("Converting wav to wav");
 			String outputFileName = "/tmp/outfile.wav";
 			String convertCmd = "ffmpeg -i " + inputFile + " -acodec pcm_s16le -ar 16000 " + outputFileName;
@@ -264,10 +290,7 @@ public class ExtractText {
         
         return outputFile;
     }
-
-    
-    
-    
+  
 /// PROCESS THE FILE //////////////////////////////////////////////////////////////////////////
     private void processFile(Channel channel, AMQP.BasicProperties header, String host, String key,
             String fileid, String intermediatefileid, File inputfile) throws IOException {
@@ -285,9 +308,9 @@ public class ExtractText {
 	configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.dmp");
 
 //        configuration.setAcousticModelPath("resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz"); 
-//	configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/acoustic/wsj/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz");
+//	  configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/acoustic/wsj/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz");
 //        configuration.setAcousticModelPath("resource:/WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz");        
-//       configuration.setDictionaryPath("resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d");
+//        configuration.setDictionaryPath("resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d");
 //        configuration.setDictionaryPath("file:/home/marcuss/Desktop/software/sphinx4/sphinx4-5prealpha/models/acoustic/wsj/dict/cmudict.0.6d");
 //        //this is a text file dictionary with spelling and phonemes 
 //        configuration.setLanguageModelPath("/home/marcuss/Desktop/workspace_sphinx/test_sphinx/models/en-us.lm.dmp");
@@ -307,6 +330,7 @@ public class ExtractText {
 //        original:  Metadata: {} 
 //        converted: outputs "processing phrase1" and Metadata: {phrase0=[]}
 //		 works!, but poor accuracy ffmpeg -i 903708.mp3 -acodec pcm_s16le -ar 16000 out7.wav
+//	high_quality.wav (bush_god_bless) came through with 100% accuracy - investigate
 
         SpeechResult result;
         
