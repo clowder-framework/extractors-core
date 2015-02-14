@@ -268,18 +268,34 @@ public class ExtractText {
 		    
 //=== COVERT FILE TO FORMAT THAT SPHINX CAN USE =================================		  		
 		if(fileType.equals("mp3")){
-			System.out.println("Converting mp3 to wav");			
+			System.out.println("Converting mp3 to wav");
+			// convert bitrat and bandwidth
+			String intermediateFileName = "/tmp/intermediate.wav";
+			String convertCmd = "ffmpeg -i " + inputFile + " -acodec pcm_s16le -ar 16000 " + intermediateFileName;
+			Process convertOut = Runtime.getRuntime().exec(convertCmd);
+			File intermediateFile = new File(intermediateFileName);
+			// make sure it's mono
 			String outputFileName = "/tmp/outfile.wav";
-			String convertCmd = "ffmpeg -i " + inputFile + " -acodec pcm_s16le -ar 16000 " + outputFileName;
-	        Process convertOut = Runtime.getRuntime().exec(convertCmd);
-	        outputFile = new File(outputFileName);
+			String convertCmd2 = "ffmpeg -i " + intermediateFile + " -ac 1 " + outputFileName;
+			Process convertOut2 = Runtime.getRuntime().exec(convertCmd2);
+			outputFile = new File(outputFileName);
+			
+			
+			
+			
 		}
 		else if(fileType.equals("wav")){	
 			System.out.println("Converting wav to wav");
+			// convert bitrat and bandwidth
+			String intermediateFileName = "/tmp/intermediate.wav";
+			String convertCmd = "ffmpeg -i " + inputFile + " -acodec pcm_s16le -ar 16000 " + intermediateFileName;
+			Process convertOut = Runtime.getRuntime().exec(convertCmd);
+			File intermediateFile = new File(intermediateFileName);
+			// make sure it's mono
 			String outputFileName = "/tmp/outfile.wav";
-			String convertCmd = "ffmpeg -i " + inputFile + " -acodec pcm_s16le -ar 16000 " + outputFileName;
-	        Process convertOut = Runtime.getRuntime().exec(convertCmd);
-	        outputFile = new File(outputFileName);
+			String convertCmd2 = "ffmpeg -i " + intermediateFile + " -ac 1 " + outputFileName;
+			Process convertOut2 = Runtime.getRuntime().exec(convertCmd2);
+			outputFile = new File(outputFileName);
 		}
 		else{
 			System.out.println("Unsupported File Type" + fileType);
