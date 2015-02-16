@@ -27,14 +27,12 @@ def main():
 # Process the file and upload the results
 def process_file(parameters):
     global extractorName, convertexe, imagetype, size
-    global logger
 
     (fd, thumbnailfile)=tempfile.mkstemp(suffix='.' + imagetype)
     try:
       # convert image to right size
       #args = [['convert', inputfile, '-resize', size], args, [thumbnailfile]]
-      #subprocess.check_output(list(itertools.chain(*args)), stderr=subprocess.STDOUT)
-      subprocess.check_output([convertexe,  inputfile, '-resize', size, thumbnailfile], stderr=subprocess.STDOUT)
+      subprocess.check_output([convertexe,  parameters['inputfile'], '-resize', size, thumbnailfile], stderr=subprocess.STDOUT)
 
       if(os.path.getsize(thumbnailfile) == 0):
         raise Exception("File is empty.")
