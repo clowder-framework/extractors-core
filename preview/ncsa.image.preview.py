@@ -38,7 +38,7 @@ def process_file(parameters):
         raise Exception("File is empty.")
 
       # upload preview image
-      extractors.upload_file_metadata(previewfile=thumbnailfile, parameters=parameters)
+      extractors.upload_preview(previewfile=thumbnailfile, parameters=parameters)
     finally:
       try:
         os.remove(thumbnailfile)
