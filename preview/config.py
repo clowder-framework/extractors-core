@@ -25,12 +25,23 @@ messageType = "*.file.image.#"
 # trust certificates, set this to false for self signed certificates
 sslVerify=False
 
-# image magick converter
-convertexe = "/usr/bin/convert"
+# image generating binary, or None if none is to be generated
+imageBinary = "/usr/local/bin/convert"
 
-# type of preview image
-imagetype = "png"
+# image preview type
+imageType = "png"
 
-# size of preview
-size = "800x600"
+# image thumbnail command line
+imageThumbnail = "@BINARY@ @INPUT@ -resize 225^ @OUTPUT@"
 
+# image preview command line
+imagePreview = "@BINARY@ @INPUT@ -resize 800x600 @OUTPUT@"
+
+# type specific preview, or None if none is to be generated
+previewBinary = None
+
+# type preview type
+previewType = None
+
+# type preview command line
+previewCommand = None
