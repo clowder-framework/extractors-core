@@ -30,6 +30,8 @@ def process_file(parameters):
     global imageBinary, imageType, imageThumbnail, imagePreview
     global previewBinary, previewType, previewCommand
 
+    print(parameters['inputfile'])
+
     if imageBinary:
         execute_command(parameters, imageBinary, imageThumbnail, imageType, True)
         execute_command(parameters, imageBinary, imagePreview, imageType, False)
@@ -41,6 +43,9 @@ def execute_command(parameters, binary, commandline, ext, thumbnail=False):
 
     (fd, tmpfile)=tempfile.mkstemp(suffix='.' + ext)
     try:
+        # close tempfile
+        os.close(fd)
+        
         # replace some special tokens
         commandline = commandline.replace('@BINARY@', binary)
         commandline = commandline.replace('@INPUT@', parameters['inputfile'])
