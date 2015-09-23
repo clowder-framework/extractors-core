@@ -66,6 +66,9 @@ def execute_command(parameters, binary, commandline, ext, thumbnail=False):
                 extractors.upload_thumbnail(thumbnail=tmpfile, parameters=parameters)
             else:
                 extractors.upload_preview(previewfile=tmpfile, parameters=parameters)
+        else:
+            log.warn("Extraction resulted in 0 byte file, nothing uploaded.")
+
     except subprocess.CalledProcessError as e:
         logger.error(binary + " : " + str(e.output))
         raise

@@ -11,13 +11,13 @@
 # =============================================================================
 
 # name to show in rabbitmq queue list
-extractorName = "ncsa.image"
+extractorName = "ncsa.image.preview"
 
 # URL to be used for connecting to rabbitmq
 rabbitmqURL = "amqp://guest:guest@localhost/%2f"
 
 # name of rabbitmq exchange
-rabbitmqExchange = "medici"
+rabbitmqExchange = "clowder"
 
 # type of files to process
 messageType = "*.file.image.#"
