@@ -6,14 +6,14 @@ import subprocess
 import tempfile
 import re
 from config import *
-import pymedici.extractors as extractors
+import pyclowder.extractors as extractors
 
 def main():
     global extractorName, messageType, rabbitmqExchange, rabbitmqURL, logger
 
     #set logging
     logging.basicConfig(format='%(levelname)-7s : %(name)s -  %(message)s', level=logging.INFO)
-    logging.getLogger('pymedici.extractors').setLevel(logging.DEBUG)
+    logging.getLogger('pyclowder.extractors').setLevel(logging.DEBUG)
     logger = logging.getLogger(extractorName)
     logger.setLevel(logging.DEBUG)
 
