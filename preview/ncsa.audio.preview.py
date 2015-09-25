@@ -6,14 +6,14 @@ import subprocess
 import tempfile
 import re
 from config import *
-import pymedici.extractors as extractors
+import pyclowder.extractors as extractors
 
 def main():
     global extractorName, messageType, rabbitmqExchange, rabbitmqURL, logger
 
     #set logging
-    logging.basicConfig(format='%(levelname)-7s : %(name)s -  %(message)s', level=logging.INFO)
-    logging.getLogger('pymedici.extractors').setLevel(logging.DEBUG)
+    logging.basicConfig(format='%(asctime)-15s %(levelname)-7s : %(name)s - %(message)s', level=logging.INFO)
+    logging.getLogger('pyclowder.extractors').setLevel(logging.DEBUG)
     logger = logging.getLogger(extractorName)
     logger.setLevel(logging.DEBUG)
 
@@ -64,6 +64,9 @@ def execute_command(parameters, binary, commandline, ext, thumbnail=False):
                 extractors.upload_thumbnail(thumbnail=tmpfile, parameters=parameters)
             else:
                 extractors.upload_preview(previewfile=tmpfile, parameters=parameters)
+        else:
+            log.warn("Extraction resulted in 0 byte file, nothing uploaded.")
+
     except subprocess.CalledProcessError as e:
         logger.error(binary + " : " + str(e.output))
         raise
