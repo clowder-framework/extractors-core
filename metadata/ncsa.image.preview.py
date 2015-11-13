@@ -43,7 +43,7 @@ def parseExif(text):
         try:
             index=line.index(':')
             if index > -1:
-                next_char = line[index+1]
+                next_char = line[index+1] if len(line) > index+1 else None
                 # next_char is undefined when ':' is last char on the line
                 if next_char and re.match("/\w/", next_char):
                     # start counting from the first ':'
@@ -54,7 +54,7 @@ def parseExif(text):
 
             depth=len(re.match(" +", line).group(0)) / 2
             key = line[0:index].strip()
-            value = line[index+1:].strip() or {}
+            value = line[index+1:].strip() if len(line) > index+1 else {}
             #print("%d %d" % (index, depth))
 
             if depth==1 and re.match("/^Geometry$/i", key) and re.match("/^\d+x\d+\+\d+\+\d+$/", value):
@@ -110,7 +110,7 @@ def process_file(parameters):
         "content": result,
         "agent": {
             "@type": "cat:extractor",
-            "extractor_id": clowder_host+"/api/extractors/imageEXIF"
+            "extractor_id": clowder_host+"/api/extractors/ncsa.image.metadata"
         }
     }
 

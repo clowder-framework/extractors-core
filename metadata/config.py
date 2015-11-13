@@ -11,7 +11,7 @@
 # =============================================================================
 
 # name to show in rabbitmq queue list
-extractorName = "imageEXIF"
+extractorName = "ncsa.image.metadata"
 
 # URL to be used for connecting to rabbitmq
 rabbitmqURL = "amqp://guest:guest@localhost:5672/%2f"
