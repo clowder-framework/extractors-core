@@ -26,5 +26,5 @@ messageType = "*.file.image.#"
 sslVerify=False
 
 # image identify binary, or None if none is to be generated
-# on linux, typically "/usr/local/bin/identify"
-imageBinary = "identify.exe"
+# on windows, typically "identify.exe"
+#imageBinary = "/usr/bin/identify"
