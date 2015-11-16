@@ -87,7 +87,11 @@ def parseExif(text):
                 if lastKey in data[len(data)-1]:
                     # First entry for this histogram/colormap, so make it a separate object in data list for now
                     sub_data = data[len(data)-1].pop(lastKey)
-                    sub_data[key] = value
+                    if lastKey == "Histogram":
+                        # Flip key/value because key is pixel count - not unique
+                        sub_data[value] = int(key)
+                    else:
+                        sub_data[key] = value # Colormap
                     sub_data["_EXIF_PARENT_KEY_NAME"] = lastKey # This lets us nest recursively if needd
                     data.append(sub_data)
                     lastDepth += 1
