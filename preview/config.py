@@ -10,20 +10,22 @@
 #
 # =============================================================================
 
+import os
+
 # name to show in rabbitmq queue list
-extractorName = "ncsa.pdf.preview"
+extractorName = os.getenv('RABBITMQ_QUEUE', "ncsa.pdf.preview")
 
 # URL to be used for connecting to rabbitmq
-rabbitmqURL = "amqp://guest:guest@localhost/%2f"
+rabbitmqURL = os.getenv('RABBITMQ_URI', "amqp://guest:guest@localhost/%2f")
 
 # name of rabbitmq exchange
-rabbitmqExchange = "clowder"
+rabbitmqExchange = os.getenv('RABBITMQ_EXCHANGE', "clowder")
 
 # type of files to process
 messageType = "*.file.application.pdf.#"
 
 # trust certificates, set this to false for self signed certificates
-sslVerify=False
+sslVerify = os.getenv('RABBITMQ_SSLVERIFY', False)
 
 # image generating binary, or None if none is to be generated
 imageBinary = "/usr/local/bin/convert"
