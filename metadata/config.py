@@ -29,4 +29,4 @@ sslVerify = os.getenv('RABBITMQ_SSLVERIFY', False)
 
 # image identify binary, or None if none is to be generated
 # on windows, typically "identify.exe"
-#imageBinary = "/usr/bin/identify"
+imageBinary = "/usr/bin/identify"
