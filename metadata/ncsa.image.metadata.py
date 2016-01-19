@@ -135,7 +135,7 @@ def parseExif(text):
             print("Skipping : " + line)
 
     # Add raw source onto the primary dictionary object and return it
-    data[0]["raw"] = text
+    #data[0]["raw"] = text
     return data[0]
 
 # Process the file and upload the results
