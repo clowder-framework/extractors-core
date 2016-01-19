@@ -10,23 +10,25 @@
 #
 # =============================================================================
 
+import os
+
 # name to show in rabbitmq queue list
-extractorName = "ncsa.video.preview"
+extractorName = os.getenv('RABBITMQ_QUEUE', "ncsa.video.preview")
 
 # URL to be used for connecting to rabbitmq
-rabbitmqURL = "amqp://guest:guest@localhost/%2f"
+rabbitmqURL = os.getenv('RABBITMQ_URI', "amqp://guest:guest@localhost/%2f")
 
 # name of rabbitmq exchange
-rabbitmqExchange = "clowder"
+rabbitmqExchange = os.getenv('RABBITMQ_EXCHANGE', "clowder")
 
 # type of files to process
 messageType = "*.file.video.#"
 
 # trust certificates, set this to false for self signed certificates
-sslVerify=False
+sslVerify = os.getenv('RABBITMQ_SSLVERIFY', False)
 
 # image generating binary, or None if none is to be generated
-imageBinary = "/usr/local/bin/ffmpeg"
+imageBinary = "/usr/bin/avconv"
 
 # image preview type
 imageType = "png"
@@ -38,7 +40,7 @@ imageThumbnail = "@BINARY@ -y -i @INPUT@ -ss 1 -t 1 -r 1 -vcodec " + imageType +
 imagePreview = "@BINARY@ -y -i @INPUT@ -ss 1 -t 1 -r 1 -vcodec " + imageType + " -f rawvideo -vf scale='if(gt(iw,800),800,iw)':-1 @OUTPUT@"
 
 # type specific preview, or None if none is to be generated
-previewBinary = "/usr/local/bin/ffmpeg"
+previewBinary = "/usr/bin/avconv"
 
 # type preview type
 previewType = "mp4"
