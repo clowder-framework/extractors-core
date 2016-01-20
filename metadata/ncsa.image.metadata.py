@@ -23,8 +23,8 @@ def fixMap(data):
     if isinstance(data, dict):
         result = {}
         for key, value in data.iteritems():
-            if ":" in key:
-                keys = key.split(":")
+            keys = re.split('\.|:', key)
+            if len(keys) > 1:                
                 lastKey = keys[-1]
                 del keys[-1]
                 d = result
@@ -187,7 +187,7 @@ def process_file(parameters):
 
 if __name__ == "__main__":
     #global imageBinary
-    #input_file="/Users/kooper/git/clowder/test/data/files/morrowplots.jpg"
+    #input_file="/Users/kooper/Downloads/1416AV_412r.ORF"
     #result=parseExif(subprocess.check_output([imageBinary, "-verbose", input_file], stderr=subprocess.STDOUT))
     #print(json.dumps(result, sort_keys=True,indent=4, separators=(',', ': ')))
     main()
