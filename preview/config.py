@@ -28,7 +28,7 @@ messageType = "*.file.audio.#"
 sslVerify = os.getenv('RABBITMQ_SSLVERIFY', False)
 
 # image generating binary, or None if none is to be generated
-imageBinary = "/usr/local/bin/sox"
+imageBinary = "/usr/bin/sox"
 
 # image preview type
 imageType = "png"
@@ -40,7 +40,7 @@ imageThumbnail = "@BINARY@ --magic @INPUT@ -n spectrogram -r -x 225 -y 200 -o @O
 imagePreview = "@BINARY@ --magic @INPUT@ -n spectrogram -x 800 -Y 600 -o @OUTPUT@"
 
 # type specific preview, or None if none is to be generated
-previewBinary = "/usr/local/bin/sox"
+previewBinary = "/usr/bin/sox"
 
 # type preview type
 previewType = "mp3"
