@@ -2,6 +2,7 @@
 import subprocess
 import logging
 import re
+import json
 from config import *
 import pyclowder.extractors as extractors
 
@@ -17,6 +18,29 @@ def main():
         rabbitmqExchange=rabbitmqExchange, rabbitmqURL=rabbitmqURL)
 
 # ----------------------------------------------------------------------
+# this will split any key that has a : into smaller subsections
+def fixMap(data):
+    if isinstance(data, dict):
+        result = {}
+        for key, value in data.iteritems():
+            if ":" in key:
+                keys = key.split(":")
+                lastKey = keys[-1]
+                del keys[-1]
+                d = result
+                for x in keys:
+                    if not x in d:
+                        d[x] = {}
+                    d = d[x]
+                if lastKey in d:
+                    print("ERROR: trying to assign a value again to same key " + lastKey)
+                d[lastKey] = fixMap(value)
+            else:
+                result[key] = fixMap(value)
+        return result
+    else:
+        return data
+
 def parseExif(text):
     # Adapted from https://github.com/dandean/imagemagick-identify-parser
     text = str(text)
@@ -41,7 +65,10 @@ def parseExif(text):
 
         # The line *must* contain a colon to be processed.
         try:
-            index=line.index(':')
+            if (line.endswith(":")):
+                index=len(line)-1
+            else:
+                index=line.index(': ')
             if index > -1:
                 # next_char is undefined when ':' is last char on the line
                 next_char = line[index+1] if len(line) > index+1 else None
@@ -136,7 +163,7 @@ def parseExif(text):
 
     # Add raw source onto the primary dictionary object and return it
     #data[0]["raw"] = text
-    return data[0]
+    return fixMap(data[0])
 
 # Process the file and upload the results
 def process_file(parameters):
@@ -159,6 +186,10 @@ def process_file(parameters):
     extractors.upload_file_metadata_jsonld(mdata=metadata, parameters=parameters)
 
 if __name__ == "__main__":
+    #global imageBinary
+    #input_file="/Users/kooper/git/clowder/test/data/files/morrowplots.jpg"
+    #result=parseExif(subprocess.check_output([imageBinary, "-verbose", input_file], stderr=subprocess.STDOUT))
+    #print(json.dumps(result, sort_keys=True,indent=4, separators=(',', ': ')))
     main()
 
 
