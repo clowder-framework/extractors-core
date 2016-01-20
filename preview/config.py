@@ -28,7 +28,7 @@ messageType = "*.file.image.#"
 sslVerify = os.getenv('RABBITMQ_SSLVERIFY', False)
 
 # image generating binary, or None if none is to be generated
-imageBinary = "/usr/local/bin/convert"
+imageBinary = "/usr/bin/convert"
 
 # image preview type
 imageType = "png"
