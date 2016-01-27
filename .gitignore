@@ -1,3 +1,4 @@
 *.pyc
-preview/pymedici
+venv
+metadata/pyclowder
 preview/pyclowder
