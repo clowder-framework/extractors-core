@@ -1,0 +1,4 @@
+*.pyc
+venv
+metadata/pyclowder
+preview/pyclowder
