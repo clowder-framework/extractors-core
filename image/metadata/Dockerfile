@@ -6,6 +6,7 @@ MAINTAINER Rob Kooper <kooper@illinois.edu>
 USER root
 RUN apt-get update && apt-get install -y \
        imagemagick \
+       ufraw-batch \
     && rm -rf /var/lib/apt/lists/*   
 
 # Switch to clowder, copy files and be ready to run
