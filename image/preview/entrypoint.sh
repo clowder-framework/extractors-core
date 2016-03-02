@@ -24,10 +24,6 @@ if [ "$1" = 'extractor' ]; then
             fi
             sleep 1
         done
-
-    else 
-        # no way to check just start extractor
-        # TODO this is where other checks can be done
     fi
 
     # just launch extractor and see what happens
