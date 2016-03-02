@@ -50,6 +50,7 @@ def execute_command(parameters, binary, commandline, ext, thumbnail=False):
         commandline = commandline.replace('@BINARY@', binary)
         commandline = commandline.replace('@INPUT@', parameters['inputfile'])
         commandline = commandline.replace('@OUTPUT@', tmpfile)
+        logger.debug(commandline)
 
         # split command line
         p = re.compile(r'''((?:[^ "']|"[^"]*"|'[^']*')+)''')
@@ -67,7 +68,7 @@ def execute_command(parameters, binary, commandline, ext, thumbnail=False):
             else:
                 extractors.upload_preview(previewfile=tmpfile, parameters=parameters)
         else:
-            log.warn("Extraction resulted in 0 byte file, nothing uploaded.")
+            logger.warn("Extraction resulted in 0 byte file, nothing uploaded.")
 
     except subprocess.CalledProcessError as e:
         logger.error(binary + " : " + str(e.output))

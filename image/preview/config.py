@@ -33,11 +33,17 @@ imageBinary = "/usr/bin/convert"
 # image preview type
 imageType = "png"
 
+# image thumbnail command line flags
+imageThumbnailFlags = os.getenv('THUMBNAIL_FLAGS', "-resize 225^")
+
 # image thumbnail command line
-imageThumbnail = "@BINARY@ @INPUT@ -resize 225^ @OUTPUT@"
+imageThumbnail = "@BINARY@ @INPUT@ " + imageThumbnailFlags + " @OUTPUT@"
+
+# image preview command line flags
+imagePreviewFlags = os.getenv('PREVIEW_FLAGS', "-resize 800x600")
 
 # image preview command line
-imagePreview = "@BINARY@ @INPUT@ -resize 800x600 @OUTPUT@"
+imagePreview = "@BINARY@ @INPUT@ " + imagePreviewFlags + " @OUTPUT@"
 
 # type specific preview, or None if none is to be generated
 previewBinary = None
