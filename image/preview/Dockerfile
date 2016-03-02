@@ -24,4 +24,6 @@ ENV RABBITMQ_URI="" \
     RABBITMQ_EXCHANGE="clowder" \
     RABBITMQ_VHOST="%2F" \
     RABBITMQ_QUEUE="ncsa.image.preview" \
-    MAIN_SCRIPT="ncsa.image.preview.py"
+    MAIN_SCRIPT="ncsa.image.preview.py" \
+    THUMBNAIL_FLAGS="-resize 225^" \
+    PREVIEW_FLAGS="-resize 800x600"
