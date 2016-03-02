@@ -14,9 +14,6 @@ if [ ! "${PROJECT}" = "" -a ! "$( echo $PROJECT | tail -c 2)" = "/" ]; then
   PROJECT="${PROJECT}/"
 fi
 
-PUSH=${PUSH:-""}
-VERSION=${VERSION:-""}
-
 # make sure PROJECT ends with /
 if [ ! "${PROJECT}" = "" ]; then
   if [ ! "$( echo $PROJECT | tail -c 2)" = "/" ]; then
@@ -26,7 +23,8 @@ fi
 
 # find out version and if we should push
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
-if [ "$VERSION" == "" ]; then
+VERSION=${VERSION:-""}
+if [ "$VERSION" = "" ]; then
   VERSION="$(git tag --points-at HEAD)"
   if [ "$BRANCH" = "master" ]; then
     PUSH=${PUSH:-"push"}
@@ -63,26 +61,25 @@ create() {
   # tag all versions
   for v in $VERSION; do
     ${DEBUG} docker tag $$ ${PROJECT}${2}:${v}
-    if [ "$PUSH" = "push" -a "$PROJECT" != "" ]; then
+    if [ "$PUSH" = "push" -a ! "$PROJECT" = "" ]; then
       ${DEBUG} docker push ${PROJECT}${2}:${v}
     fi
   done
 
   # tag version as latest, but don't push
-  if [ "$BRANCH" != "master" ]; then
+  if [ ! "$BRANCH" = "master" ]; then
     ${DEBUG} docker tag $$ ${PROJECT}${2}:latest
     LATEST="$LATEST $2"
   fi
 
   # delete image with temp id
   ${DEBUG} docker rmi $$
-  if [ -n "$VERBOSE" ]; then echo "Finished $1"; fi
 }
 
 # Create the docker containers
 for FOLDER in */*; do
-  if [ "$FOLDER" != "audio/speech2text" ]; then
-    NAME=${FOLDER/\//-}
+  if [ ! "$FOLDER" = "audio/speech2text" ]; then
+    NAME=$( echo "$FOLDER" | sed 's#/#-#g' )
     create "${FOLDER}" "clowder-extractors-${NAME}"
   fi
 done
