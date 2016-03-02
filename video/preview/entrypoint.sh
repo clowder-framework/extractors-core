@@ -16,23 +16,22 @@ fi
 if [ "$1" = 'extractor' ]; then
     cd /home/clowder
 
-    # start extractor
-    for i in `seq 1 10`; do
-        #  check to see if rabbitmq is up if started using docker-compose or --link flag
-        if [ "$RABBITMQ_PORT_5672_TCP_ADDR" != "" ]; then
+    if [ "$RABBITMQ_PORT_5672_TCP_ADDR" != "" ]; then
+        # start extractor after rabbitmq is up
+        for i in `seq 1 10`; do
             if nc -z $RABBITMQ_PORT_5672_TCP_ADDR $RABBITMQ_PORT_5672_TCP_PORT ; then
                 exec ./${MAIN_SCRIPT}
             fi
-        fi
+            sleep 1
+        done
 
-        # check to see if rabbitmq is up for kubernetes
-        # TODO needs implementation maybe from NDS people
+    else 
+        # no way to check just start extractor
+        # TODO this is where other checks can be done
+    fi
 
-        # wait for a second and try again
-        sleep 1
-    done
-    echo "Could not connect to RabbitMQ"
-    exit -1
+    # just launch extractor and see what happens
+    exec ./${MAIN_SCRIPT}
 fi
 
 exec "$@"
