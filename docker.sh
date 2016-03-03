@@ -5,6 +5,8 @@
 # PUSH    : set to push to push, anthing else not to push. If not set
 #           the program will push if master or develop.
 # PROJECT : the project to add to the image, default is NCSA
+# VERSION : the list of tags to use, if not set this will be based on
+#           the branch name.
 
 #DEBUG=echo
 
@@ -32,6 +34,9 @@ if [ "$VERSION" = "" ]; then
   elif [ "$BRANCH" = "develop" ]; then
     PUSH=${PUSH:-"push"}
     VERSION="${VERSION} latest"
+  elif [ "$( echo $BRANCH | sed -e 's#^release/.*$#release#')" = "release" ]; then
+    PUSH=${PUSH:-"push"}
+    VERSION="$( echo $BRANCH | sed -e 's#^release/\(.*\)$#\1#' )"
   else
     PUSH=${PUSH:-""}
   fi
