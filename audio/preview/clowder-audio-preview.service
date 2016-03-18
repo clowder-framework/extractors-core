@@ -1,0 +1,16 @@
+[Unit]
+Description=Clowder Audio Previewer
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutSec=60
+RestartSec=60
+Restart=always
+ExecStartPre=-/usr/bin/docker kill clowder-audio-preview
+ExecStartPre=-/usr/bin/docker rm clowder-audio-preview
+ExecStartPre=/usr/bin/docker pull ncsa/clowder-extractors-audio-preview:latest
+ExecStart=/usr/bin/docker run --name clowder-audio-preview -e "RABBITMQ_QUEUE=ncsa.audio.preview" -e "RABBITMQ_URI=amqp://clowder:sV2YcNDPVEvcV6HTG@rabbitmq.ncsa.illinois.edu/clowder-dev" -e "RABBITMQ_EXCHANGE=clowder" ncsa/clowder-extractors-audio-preview
+
+[Install]
+WantedBy=multi-user.target
