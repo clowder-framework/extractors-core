@@ -10,7 +10,7 @@ Restart=always
 ExecStartPre=-/usr/bin/docker kill clowder-image-metadata
 ExecStartPre=-/usr/bin/docker rm clowder-image-metadata
 ExecStartPre=/usr/bin/docker pull ncsa/clowder-extractors-image-metadata:latest
-ExecStart=/usr/bin/docker run --name clowder-image-metadata -e "RABBITMQ_QUEUE=ncsa.image.metadata" -e "RABBITMQ_URI=amqp://clowder:sV2YcNDPVEvcV6HTG@rabbitmq.ncsa.illinois.edu/clowder-dev" -e "RABBITMQ_EXCHANGE=clowder" ncsa/clowder-extractors-image-metadata
+ExecStart=/usr/bin/docker run --name clowder-image-metadata -e "RABBITMQ_QUEUE=ncsa.image.metadata" -e "RABBITMQ_URI=amqp://guest:guest@rabbitmq/clowder-dev" -e "RABBITMQ_EXCHANGE=clowder" ncsa/clowder-extractors-image-metadata
 
 [Install]
 WantedBy=multi-user.target
