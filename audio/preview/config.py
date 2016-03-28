@@ -1,11 +1,11 @@
 # =============================================================================
 #
-# In order for this extractor to run according to your preferences, 
-# the following parameters need to be set. 
-# 
-# Some parameters can be left with the default values provided here - in that 
-# case it is important to verify that the default value is appropriate to 
-# your system. It is especially important to verify that paths to files and 
+# In order for this extractor to run according to your preferences,
+# the following parameters need to be set.
+#
+# Some parameters can be left with the default values provided here - in that
+# case it is important to verify that the default value is appropriate to
+# your system. It is especially important to verify that paths to files and
 # software applications are valid in your system.
 #
 # =============================================================================

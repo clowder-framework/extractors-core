@@ -8,16 +8,17 @@ import re
 from config import *
 import pyclowder.extractors as extractors
 
+
 def main():
     global extractorName, messageType, rabbitmqExchange, rabbitmqURL, logger
 
-    #set logging
+    # set logging
     logging.basicConfig(format='%(asctime)-15s %(levelname)-7s : %(name)s - %(message)s', level=logging.INFO)
     logging.getLogger('pyclowder.extractors').setLevel(logging.DEBUG)
     logger = logging.getLogger(extractorName)
     logger.setLevel(logging.DEBUG)
 
-    #connect to rabbitmq
+    # connect to rabbitmq
     extractors.connect_message_bus(extractorName=extractorName,
                                    messageType=messageType,
                                    processFileFunction=process_file,
@@ -26,6 +27,8 @@ def main():
 
 # ----------------------------------------------------------------------
 # Process the file and upload the results
+
+
 def process_file(parameters):
     global imageBinary, imageType, imageThumbnail, imagePreview
     global previewBinary, previewType, previewCommand
@@ -38,14 +41,15 @@ def process_file(parameters):
     if previewBinary:
         execute_command(parameters, previewBinary, previewCommand, previewType, False)
 
+
 def execute_command(parameters, binary, commandline, ext, thumbnail=False):
     global logger
 
-    (fd, tmpfile)=tempfile.mkstemp(suffix='.' + ext)
+    (fd, tmpfile) = tempfile.mkstemp(suffix='.' + ext)
     try:
         # close tempfile
         os.close(fd)
-        
+
         # replace some special tokens
         commandline = commandline.replace('@BINARY@', binary)
         commandline = commandline.replace('@INPUT@', parameters['inputfile'])
@@ -74,10 +78,10 @@ def execute_command(parameters, binary, commandline, ext, thumbnail=False):
         logger.error(binary + " : " + str(e.output))
         raise
     finally:
-      try:
-        os.remove(tmpfile)
-      except:
-        pass
+        try:
+            os.remove(tmpfile)
+        except:
+            pass
 
 if __name__ == "__main__":
     main()
