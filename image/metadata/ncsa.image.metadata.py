@@ -191,7 +191,9 @@ def process_file(parameters):
         [imageBinary, "-verbose", input_file], stderr=subprocess.STDOUT))
 
     metadata = {
-        "@context": "http://www.w3.org/2003/12/exif/",
+        "@context": {
+            "@vocab": "http://www.w3.org/2003/12/exif/"
+        },
         "file_id": parameters["fileid"],
         "content": result,
         "agent": {
