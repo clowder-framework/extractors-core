@@ -73,6 +73,8 @@ def check_message(parameters):
     }
 
     extractors.upload_file_metadata_jsonld(mdata=metadata, parameters=parameters)
+    # Send acknowledgement of this message so it isn't reprocessed
+    parameters['channel'].basic_ack(parameters['method'].delivery_tag)
     return False
 
 def process_file(parameters):
