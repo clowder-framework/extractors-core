@@ -12,13 +12,16 @@ import pyclowder.extractors as extractors
 
 
 def main():
-    global extractorName, messageType, rabbitmqExchange, rabbitmqURL, logger
+    global extractorName, messageType, rabbitmqExchange, rabbitmqURL, logger, hashList
 
     # set logging
     logging.basicConfig(format='%(asctime)-15s %(levelname)-7s : %(name)s - %(message)s', level=logging.INFO)
     logging.getLogger('pyclowder.extractors').setLevel(logging.DEBUG)
     logger = logging.getLogger(extractorName)
     logger.setLevel(logging.DEBUG)
+
+    if isinstance(hashList,str):
+        hashList = hashList.replace("[","").replace("]","").replace("'","").split(",")
 
     # connect to rabbitmq
     extractors.connect_message_bus(extractorName=extractorName,
