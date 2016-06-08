@@ -192,7 +192,7 @@ def process_file(parameters):
 
     metadata = {
         "@context": {
-            "@vocab": "http://www.w3.org/2003/12/exif/"
+            "@vocab": "http://www.w3.org/2003/12/exif/ns"
         },
         "file_id": parameters["fileid"],
         "content": result,
