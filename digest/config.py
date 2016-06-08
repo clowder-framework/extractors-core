@@ -28,13 +28,4 @@ messageType = "*.file.#"
 sslVerify = os.getenv('RABBITMQ_SSLVERIFY', False)
 
 # control which digests to include
-hashList = {
-    "md5": True,
-    "sha1": True,
-    "sha224": True,
-    "sha256": True,
-    "sha384": True,
-    "sha512": True
-}
-
-
+hashList = os.getenv('EXTRACTOR_HASHLIST', ["md5","sha1","sha224","sha256","sha384","sha512"])

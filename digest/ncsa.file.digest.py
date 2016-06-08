@@ -33,8 +33,6 @@ def main():
 # ----------------------------------------------------------------------
 # We will stream the file ourselves here, instead of returning True and downloading to process_file()
 def check_message(parameters):
-    print(parameters)
-
     # Prepare target URL
     fileTarget = parameters['host']
     fileTarget += "/" if fileTarget[0] != "/" else ""
@@ -43,35 +41,31 @@ def check_message(parameters):
     logger.debug("sending request for digest streaming: "+fileTarget)
     r = requests.get(fileTarget, stream=True)
 
-    if hashList["md5"]: md5 = hashlib.md5()
-    if hashList["sha1"]: sha1 = hashlib.sha1()
-    if hashList["sha224"]: sha224 = hashlib.sha224()
-    if hashList["sha256"]: sha256 = hashlib.sha256()
-    if hashList["sha384"]: sha384 = hashlib.sha384()
-    if hashList["sha512"]: sha512 = hashlib.sha512()
+    # Prepare hash objects
+    hashes = {}
+    for alg in hashList:
+        hashes[alg] = hashlib.new(alg)
 
+    # Stream file and update hashes
     for chunk in r.iter_content():
-        if hashList["md5"]: md5.update(chunk)
-        if hashList["sha1"]: sha1.update(chunk)
-        if hashList["sha224"]: sha224.update(chunk)
-        if hashList["sha256"]: sha256.update(chunk)
-        if hashList["sha384"]: sha384.update(chunk)
-        if hashList["sha512"]: sha512.update(chunk)
+        for hash in hashes.itervalues():
+            hash.update(chunk)
+
+    # Generate final hex hash
+    hashDigest = {}
+    for (k,v) in hashes.iteritems():
+        hashDigest[k] = v.hexdigest()
+
+    # Generate JSON-LD context
+    hashContext = {}
+    for alg in hashList:
+        hashContext[alg] = "http://www.w3.org/2001/04/xmldsig-more#%s" % alg
 
     # store results as metadata
     metadata = {
-        "@context": {
-            "@vocab": "https://tools.ietf.org/html/draft-eastlake-xmldsig-uri-00"
-        },
+        "@context": hashContext,
         "dataset_id": parameters["datasetId"],
-        "content": {
-            "md5": md5.hexdigest(),
-            "sha1": sha1.hexdigest(),
-            "sha224": sha224.hexdigest(),
-            "sha256": sha256.hexdigest(),
-            "sha384": sha384.hexdigest(),
-            "sha512": sha512.hexdigest()
-        },
+        "content": hashDigest,
         "agent": {
             "@type": "cat:extractor",
             "extractor_id": parameters['host'] + "/api/extractors/" + extractorName
