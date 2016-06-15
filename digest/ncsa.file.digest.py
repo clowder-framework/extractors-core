@@ -36,6 +36,10 @@ def main():
 # ----------------------------------------------------------------------
 # We will stream the file ourselves here, instead of returning True and downloading to process_file()
 def check_message(parameters):
+    # Bypass downloading of this file for process_file() - we'll handle streaming it ourselves
+    return "bypass"
+
+def process_file(parameters):
     # Prepare target URL
     fileTarget = parameters['host']
     fileTarget += "/" if fileTarget[0] != "/" else ""
@@ -76,12 +80,6 @@ def check_message(parameters):
     }
 
     extractors.upload_file_metadata_jsonld(mdata=metadata, parameters=parameters)
-    # Send acknowledgement of this message so it isn't reprocessed
-    parameters['channel'].basic_ack(parameters['method'].delivery_tag)
-    return False
-
-def process_file(parameters):
-    pass
 
 if __name__ == "__main__":
     main()
