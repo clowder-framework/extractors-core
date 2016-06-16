@@ -1,10 +1,6 @@
 #!/usr/bin/env python
 
 import logging
-import os
-import subprocess
-import tempfile
-import re
 import hashlib, zlib
 import requests
 from config import *
