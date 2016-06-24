@@ -6,7 +6,7 @@
     "author": "Rob Kooper <koooper@illinois.edu>",
     "contributors": [],
     "contexts": [],
-    "repository": {"repType": "git", "repUrl": "https://@opensource.ncsa.illinois.edu/bitbucket/scm/cats/extractors-core.git"},
+    "repository": {"repType": "git", "repUrl": "https://opensource.ncsa.illinois.edu/bitbucket/scm/cats/extractors-core.git"},
     "external_services": [],
     "dependencies": ["libreoffice", "imagemagick"],
     "bibtex": [""]

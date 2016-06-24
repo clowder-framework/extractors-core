@@ -10,7 +10,7 @@ ENV RABBITMQ_URI="" \
     RABBITMQ_EXCHANGE="clowder" \
     RABBITMQ_VHOST="%2F" \
     RABBITMQ_QUEUE="ncsa.office.preview" \
-    REGISTRATION_ENDPOINTS="" \
+    REGISTRATION_ENDPOINTS="https://clowder.ncsa.illinois.edu/extractors" \
     MAIN_SCRIPT="ncsa.office.preview.py"
 
 # Install any programs needed
@@ -25,6 +25,6 @@ RUN apt-get update \
 USER clowder
 
 # command to run when starting docker
-COPY entrypoint.sh *.py /home/clowder/
+COPY entrypoint.sh *.py extractor_info.json /home/clowder/
 ENTRYPOINT ["/home/clowder/entrypoint.sh"]
 CMD ["extractor"]
