@@ -1,0 +1,13 @@
+{
+    "@context": "http://clowder.ncsa.illinois.edu/contexts/extractors.jsonld",
+    "name": "ncsa.pdf.preview",
+    "version": "1.0",
+    "description": "Creates thumbnail previews of PDF files, as well as a copy for PDF preview.",
+    "author": "Rob Kooper <koooper@illinois.edu>",
+    "contributors": [],
+    "contexts": [],
+    "repository": {"repType": "git", "repUrl": "https://opensource.ncsa.illinois.edu/bitbucket/scm/cats/extractors-core.git"},
+    "external_services": [],
+    "dependencies": ["imagemagick"],
+    "bibtex": [""]
+}
