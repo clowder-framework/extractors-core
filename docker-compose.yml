@@ -12,27 +12,27 @@ clowder:
 
 # extractors
 audio-preview:
-  image: clowder/clowder-extractors-audio-preview
+  image: clowder/extractors-audio-preview
   links:
     - rabbitmq
 
 image-preview:
-  image: clowder/clowder-extractors-image-preview
+  image: clowder/extractors-image-preview
   links:
     - rabbitmq
 
 image-metadata:
-  image: clowder/clowder-extractors-image-metadata
+  image: clowder/extractors-image-metadata
   links:
     - rabbitmq
 
 pdf-preview:
-  image: clowder/clowder-extractors-pdf-preview
+  image: clowder/extractors-pdf-preview
   links:
     - rabbitmq
 
 video-preview:
-  image: clowder/clowder-extractors-video-preview
+  image: clowder/extractors-video-preview
   links:
     - rabbitmq
 
