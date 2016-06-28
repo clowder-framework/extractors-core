@@ -1,8 +1,9 @@
 # clowder server
 clowder:
-  image: ncsa/clowder:develop
+  image: clowder/clowder:develop
   # environment:
   #   SMTP_HOST: smtp.ncsa.illinois.edu
+  #   CLOWDER_ADMINS: "you@yourhost.com"
   ports:
     - "9000"
   links:
@@ -11,27 +12,27 @@ clowder:
 
 # extractors
 audio-preview:
-  image: ncsa/clowder-extractors-audio-preview
+  image: clowder/clowder-extractors-audio-preview
   links:
     - rabbitmq
 
 image-preview:
-  image: ncsa/clowder-extractors-image-preview
+  image: clowder/clowder-extractors-image-preview
   links:
     - rabbitmq
 
 image-metadata:
-  image: ncsa/clowder-extractors-image-metadata
+  image: clowder/clowder-extractors-image-metadata
   links:
     - rabbitmq
 
 pdf-preview:
-  image: ncsa/clowder-extractors-pdf-preview
+  image: clowder/clowder-extractors-pdf-preview
   links:
     - rabbitmq
 
 video-preview:
-  image: ncsa/clowder-extractors-video-preview
+  image: clowder/clowder-extractors-video-preview
   links:
     - rabbitmq
 

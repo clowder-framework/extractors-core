@@ -11,7 +11,7 @@
 #DEBUG=echo
 
 # make sure PROJECT ends with /
-PROJECT=${PROJECT:-"ncsa"}
+PROJECT=${PROJECT:-"clowder"}
 if [ ! "${PROJECT}" = "" -a ! "$( echo $PROJECT | tail -c 2)" = "/" ]; then
   PROJECT="${PROJECT}/"
 fi
@@ -85,7 +85,7 @@ create() {
 for FOLDER in */*; do
   if [ ! "$FOLDER" = "audio/speech2text" ]; then
     NAME=$( echo "$FOLDER" | sed 's#/#-#g' )
-    create "${FOLDER}" "clowder-extractors-${NAME}"
+    create "${FOLDER}" "extractors-${NAME}"
   fi
 done
 
