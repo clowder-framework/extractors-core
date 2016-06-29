@@ -59,9 +59,14 @@ create() {
       ${DEBUG} docker tag $$ ${2}:${v}
     else
       for p in ${PROJECT}; do
-        ${DEBUG} docker tag $$ ${p}/${2}:${v}
+        if [ "$p" == "ncsa" ]; then
+          NAME="clowder-$2"
+        else
+          NAME=$2
+        fi
+        ${DEBUG} docker tag $$ ${p}/${NAME}:${v}
         if [ "$PUSH" = "push" ]; then
-          ${DEBUG} docker push ${p}/${2}:${v}
+          ${DEBUG} docker push ${p}/${NAME}:${v}
         fi
       done
     fi
@@ -71,13 +76,18 @@ create() {
   if [ ! "$BRANCH" = "master" ]; then
     if [ "$PROJECT" = "" ]; then
       ${DEBUG} docker tag $$ ${2}:latest
+      LATEST="$LATEST $2"
     else
       for p in ${PROJECT}; do
-        ${DEBUG} docker tag $$ ${p}/${2}:latest
+        if [ "$p" == "ncsa" ]; then
+          NAME="clowder-$2"
+        else
+          NAME=$2
+        fi
+        ${DEBUG} docker tag $$ ${p}/${NAME}:latest
+        LATEST="$LATEST $NAME"
       done
     fi
-    
-    LATEST="$LATEST $2"
   fi
 
   # delete image with temp id
