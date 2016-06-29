@@ -18,6 +18,15 @@ def main():
     logger = logging.getLogger(extractorName)
     logger.setLevel(logging.DEBUG)
 
+    # setup
+    extractors.setup(extractorName=extractorName,
+                       messageType=messageType,
+                       rabbitmqURL=rabbitmqURL,
+                       rabbitmqExchange=rabbitmqExchange)
+
+    # register extractor info
+    extractors.register_extractor(registrationEndpoints)
+
     # connect to rabbitmq
     extractors.connect_message_bus(extractorName=extractorName,
                                    messageType=messageType,

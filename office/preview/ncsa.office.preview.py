@@ -27,11 +27,11 @@ def main():
     # register extractor info
     extractors.register_extractor(registrationEndpoints)
 
-    #connect to rabbitmq
+    # connect to rabbitmq
     extractors.connect_message_bus(extractorName=extractorName,
-                                   messageType=messageType, 
-                                   processFileFunction=process_file, 
-                                   rabbitmqExchange=rabbitmqExchange, 
+                                   messageType=messageType,
+                                   processFileFunction=process_file,
+                                   rabbitmqExchange=rabbitmqExchange,
                                    rabbitmqURL=rabbitmqURL)
 
 # ----------------------------------------------------------------------
