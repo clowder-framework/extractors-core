@@ -4,24 +4,14 @@
 # DEBUG   : set to echo to print command and not execute
 # PUSH    : set to push to push, anthing else not to push. If not set
 #           the program will push if master or develop.
-# PROJECT : the project to add to the image, default is NCSA
+# PROJECT : the project to add to the image, default is ncsa and clowder
 # VERSION : the list of tags to use, if not set this will be based on
 #           the branch name.
 
 #DEBUG=echo
 
-# make sure PROJECT ends with /
-PROJECT=${PROJECT:-"clowder"}
-if [ ! "${PROJECT}" = "" -a ! "$( echo $PROJECT | tail -c 2)" = "/" ]; then
-  PROJECT="${PROJECT}/"
-fi
-
-# make sure PROJECT ends with /
-if [ ! "${PROJECT}" = "" ]; then
-  if [ ! "$( echo $PROJECT | tail -c 2)" = "/" ]; then
-    PROJECT="${PROJECT}/"
-  fi
-fi
+# set default for clowder
+PROJECT=${PROJECT:-"ncsa clowder"}
 
 # find out version and if we should push
 BRANCH="$(git rev-parse --abbrev-ref HEAD)"
@@ -65,15 +55,28 @@ create() {
 
   # tag all versions
   for v in $VERSION; do
-    ${DEBUG} docker tag $$ ${PROJECT}${2}:${v}
-    if [ "$PUSH" = "push" -a ! "$PROJECT" = "" ]; then
-      ${DEBUG} docker push ${PROJECT}${2}:${v}
+    if [ "$PROJECT" = "" ]; then
+      ${DEBUG} docker tag $$ ${2}:${v}
+    else
+      for p in ${PROJECT}; do
+        ${DEBUG} docker tag $$ ${p}/${2}:${v}
+        if [ "$PUSH" = "push" ]; then
+          ${DEBUG} docker push ${p}/${2}:${v}
+        fi
+      done
     fi
   done
 
   # tag version as latest, but don't push
   if [ ! "$BRANCH" = "master" ]; then
-    ${DEBUG} docker tag $$ ${PROJECT}${2}:latest
+    if [ "$PROJECT" = "" ]; then
+      ${DEBUG} docker tag $$ ${2}:latest
+    else
+      for p in ${PROJECT}; do
+        ${DEBUG} docker tag $$ ${p}/${2}:latest
+      done
+    fi
+    
     LATEST="$LATEST $2"
   fi
 
@@ -91,5 +94,11 @@ done
 
 # remove latest tags
 for r in $LATEST; do
-  ${DEBUG} docker rmi ${PROJECT}${r}:latest
+  if [ "$PROJECT" = "" ]; then
+    ${DEBUG} docker rmi ${r}:latest
+  else
+    for p in ${PROJECT}; do
+      ${DEBUG} docker rmi ${p}/${r}:latest
+    done
+  fi
 done
