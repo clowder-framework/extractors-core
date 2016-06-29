@@ -23,6 +23,7 @@ rabbitmqExchange = os.getenv('RABBITMQ_EXCHANGE', "clowder")
 
 # type of files to process
 messageType = ["*.file.application.msword.#",
+               "*.file.application.excel.#",
                "*.file.application.vnd_openxmlformats-officedocument_wordprocessingml_document.#",
                "*.file.application.vnd_openxmlformats-officedocument_spreadsheetml_sheet.#",
                "*.file.application.vnd_openxmlformats-officedocument_presentationml_presentation.#",
