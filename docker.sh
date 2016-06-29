@@ -76,7 +76,7 @@ create() {
   if [ ! "$BRANCH" = "master" ]; then
     if [ "$PROJECT" = "" ]; then
       ${DEBUG} docker tag $$ ${2}:latest
-      LATEST="$LATEST $2"
+      LATEST="$LATEST ${2}:latest"
     else
       for p in ${PROJECT}; do
         if [ "$p" == "ncsa" ]; then
@@ -85,7 +85,7 @@ create() {
           NAME=$2
         fi
         ${DEBUG} docker tag $$ ${p}/${NAME}:latest
-        LATEST="$LATEST $NAME"
+        LATEST="$LATEST ${p}/${NAME}:latest"
       done
     fi
   fi
@@ -104,11 +104,5 @@ done
 
 # remove latest tags
 for r in $LATEST; do
-  if [ "$PROJECT" = "" ]; then
-    ${DEBUG} docker rmi ${r}:latest
-  else
-    for p in ${PROJECT}; do
-      ${DEBUG} docker rmi ${p}/${r}:latest
-    done
-  fi
+  ${DEBUG} docker rmi ${r}
 done
