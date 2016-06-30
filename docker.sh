@@ -95,7 +95,8 @@ create() {
 }
 
 # Create the docker containers
-for FOLDER in */*; do
+for x in $( find . -name Dockerfile ); do
+ FOLDER=$( echo $x | sed 's#./\(.*\)/Dockerfile#\1#' )
   if [ ! "$FOLDER" = "audio/speech2text" ]; then
     NAME=$( echo "$FOLDER" | sed 's#/#-#g' )
     create "${FOLDER}" "extractors-${NAME}"
