@@ -59,7 +59,7 @@ create() {
       ${DEBUG} docker tag $$ ${2}:${v}
     else
       for p in ${PROJECT}; do
-        if [ "$p" == "ncsa" ]; then
+        if [ "$p" = "ncsa" ]; then
           NAME="clowder-$2"
         else
           NAME=$2
@@ -79,7 +79,7 @@ create() {
       LATEST="$LATEST ${2}:latest"
     else
       for p in ${PROJECT}; do
-        if [ "$p" == "ncsa" ]; then
+        if [ "$p" = "ncsa" ]; then
           NAME="clowder-$2"
         else
           NAME=$2
