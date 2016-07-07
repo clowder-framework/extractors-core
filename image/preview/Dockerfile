@@ -21,8 +21,7 @@ USER root
 RUN apt-get update && apt-get install -y \
        imagemagick \
        ufraw-batch \
-    && rm -rf /var/lib/apt/lists/* \
-    pip install --upgrade python-logstash  
+    && rm -rf /var/lib/apt/lists/*
 
 # Switch to clowder, copy files and be ready to run
 USER clowder
