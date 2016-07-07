@@ -1,0 +1,13 @@
+{
+    "@context": "http://clowder.ncsa.illinois.edu/contexts/extractors.jsonld",
+    "name": "ncsa.image.preview",
+    "version": "1.0",
+    "description": "Creates thumbnail and image previews of Image files.",
+    "author": "Rob Kooper <koooper@illinois.edu>",
+    "contributors": ["Sandeep Puthanveetil Satheesan <sandeeps@illinois.edu>"],
+    "contexts": [],
+    "repository": {"repType": "git", "repUrl": "https://opensource.ncsa.illinois.edu/bitbucket/scm/cats/extractors-core.git"},
+    "external_services": [],
+    "dependencies": ["imagemagick", "ufraw-batch"],
+    "bibtex": [""]
+}

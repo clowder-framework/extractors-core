@@ -14,13 +14,21 @@ def main():
     logging.basicConfig(format='%(levelname)-7s : %(name)s -  %(message)s', level=logging.WARN)
     logging.getLogger('pyclowder.extractors').setLevel(logging.INFO)
 
+    # setup
+    extractors.setup(extractorName=extractorName,
+                       messageType=messageType,
+                       rabbitmqURL=rabbitmqURL,
+                       rabbitmqExchange=rabbitmqExchange)
+
+    # register extractor info
+    extractors.register_extractor(registrationEndpoints)
+
     # connect to rabbitmq
-    extractors.connect_message_bus(
-        extractorName=extractorName,
-        messageType=messageType,
-        processFileFunction=process_file,
-        rabbitmqExchange=rabbitmqExchange,
-        rabbitmqURL=rabbitmqURL)
+    extractors.connect_message_bus(extractorName=extractorName,
+                                   messageType=messageType,
+                                   processFileFunction=process_file,
+                                   rabbitmqExchange=rabbitmqExchange,
+                                   rabbitmqURL=rabbitmqURL)
 
 # ----------------------------------------------------------------------
 # this will split any key that has a : into smaller subsections

@@ -1,0 +1,13 @@
+{
+    "@context": "http://clowder.ncsa.illinois.edu/contexts/extractors.jsonld",
+    "name": "ncsa.image.metadata",
+    "version": "1.0",
+    "description": "Extracts metadata from Image files.",
+    "author": "Max Burnette <mburnet2@illinois.edu>",
+    "contributors": ["Rob Kooper <koooper@illinois.edu>"],
+    "contexts": [],
+    "repository": {"repType": "git", "repUrl": "https://opensource.ncsa.illinois.edu/bitbucket/scm/cats/extractors-core.git"},
+    "external_services": [],
+    "dependencies": ["imagemagick", "ufraw-batch"],
+    "bibtex": [""]
+}
