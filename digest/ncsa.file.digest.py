@@ -8,7 +8,7 @@ import pyclowder.extractors as extractors
 
 
 def main():
-    global extractorName, messageType, rabbitmqExchange, rabbitmqURL, logger, hashList
+    global extractorName, messageType, rabbitmqExchange, rabbitmqURL, logger, hashList, registrationEndpoints
 
     # set logging
     logging.basicConfig(format='%(asctime)-15s %(levelname)-7s : %(name)s - %(message)s', level=logging.INFO)

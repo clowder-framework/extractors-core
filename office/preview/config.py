@@ -56,7 +56,8 @@ messageType = ["*.file.application.msword.#",
 sslVerify = os.getenv('RABBITMQ_SSLVERIFY', False)
 
 # Comma delimited list of endpoints and keys for registering extractor information
-registrationEndpoints = os.getenv('REGISTRATION_ENDPOINTS', "http://localhost:9000/clowder/api/extractors?key=key1, http://host2:9000/api/extractors?key=key2")
+# for example https://clowder.ncsa.illinois.edu/clowder/api/extractors?key=key1
+registrationEndpoints = os.getenv('REGISTRATION_ENDPOINTS', "https://clowder.ncsa.illinois.edu/extractors")
 
 # type specific preview
 libreoffice = "/usr/bin/libreoffice"

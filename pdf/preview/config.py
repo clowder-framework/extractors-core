@@ -27,6 +27,10 @@ messageType = "*.file.application.pdf.#"
 # trust certificates, set this to false for self signed certificates
 sslVerify = os.getenv('RABBITMQ_SSLVERIFY', False)
 
+# Comma delimited list of endpoints and keys for registering extractor information
+# for example https://clowder.ncsa.illinois.edu/clowder/api/extractors?key=key1
+registrationEndpoints = os.getenv('REGISTRATION_ENDPOINTS', "https://clowder.ncsa.illinois.edu/extractors")
+
 # image generating binary, or None if none is to be generated
 imageBinary = "/usr/bin/convert"
 

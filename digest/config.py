@@ -27,5 +27,9 @@ messageType = "*.file.#"
 # trust certificates, set this to false for self signed certificates
 sslVerify = os.getenv('RABBITMQ_SSLVERIFY', False)
 
+# Comma delimited list of endpoints and keys for registering extractor information
+# for example https://clowder.ncsa.illinois.edu/clowder/api/extractors?key=key1
+registrationEndpoints = os.getenv('REGISTRATION_ENDPOINTS', "https://clowder.ncsa.illinois.edu/extractors")
+
 # control which digests to include
 hashList = os.getenv('EXTRACTOR_HASHLIST', ["md5","sha1","sha224","sha256","sha384","sha512"])
