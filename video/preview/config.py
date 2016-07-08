@@ -42,8 +42,10 @@ imageThumbnail = "@BINARY@ -y -i @INPUT@ -ss 1 -t 1 -r 1 -vcodec " + \
     imageType + " -f rawvideo -vf scale=225:-1 @OUTPUT@"
 
 # image preview command line
+#imagePreview = "@BINARY@ -y -i @INPUT@ -ss 1 -t 1 -r 1 -vcodec " + \
+#    imageType + " -f rawvideo -vf scale='if(gt(iw,800),800,iw)':-1 @OUTPUT@"
 imagePreview = "@BINARY@ -y -i @INPUT@ -ss 1 -t 1 -r 1 -vcodec " + \
-    imageType + " -f rawvideo -vf scale='if(gt(iw,800),800,iw)':-1 @OUTPUT@"
+    imageType + " -f rawvideo @OUTPUT@"
 
 # type specific preview, or None if none is to be generated
 previewBinary = "/usr/bin/avconv"
