@@ -75,10 +75,17 @@ def execute_command(parameters, binary, commandline, ext, thumbnail=False):
             # upload result
             if thumbnail:
                 extractors.upload_thumbnail(thumbnail=tmpfile, parameters=parameters)
+                extractors.status_update(channel=parameters['channel'], header=parameters['header'],
+                                         fileid=parameters['fileid'], status="Uploaded thumbnail")
             else:
                 extractors.upload_preview(previewfile=tmpfile, parameters=parameters)
+                extractors.status_update(channel=parameters['channel'], header=parameters['header'],
+                                         fileid=parameters['fileid'], status="Uploaded preview")
         else:
-            logger.warn("Extraction resulted in 0 byte file, nothing uploaded.")
+            msg = "Extraction resulted in 0 byte file, nothing uploaded."
+            extractors.status_update(channel=parameters['channel'], header=parameters['header'],
+                                     fileid=parameters['fileid'], status=msg)
+            logger.warn(msg)
 
     except subprocess.CalledProcessError as e:
         msg = "ERROR [%d] : %s" % (e.returncode, e.message)
