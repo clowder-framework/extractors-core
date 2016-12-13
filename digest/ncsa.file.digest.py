@@ -66,7 +66,7 @@ def process_file(parameters):
 
     # store results as metadata
     metadata = {
-        "@context": hashContext,
+        "@context": [hashContext],
         "dataset_id": parameters["datasetId"],
         "content": hashDigest,
         "agent": {
