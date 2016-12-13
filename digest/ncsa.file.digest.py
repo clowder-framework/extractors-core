@@ -66,7 +66,7 @@ def process_file(parameters):
 
     # store results as metadata
     metadata = {
-        "@context": ["https://clowder.ncsa.illinois.edu/clowder/contexts/metadata.jsonld", hashContext],
+        "@context": ["https://clowder.ncsa.illinois.edu/contexts/metadata.jsonld", hashContext],
         "dataset_id": parameters["datasetId"],
         "content": hashDigest,
         "agent": {
