@@ -3,79 +3,77 @@
 import logging
 import hashlib, zlib
 import requests
-from config import *
-import pyclowder.extractors as extractors
+import json
+
+from pyclowder.extractors import Extractor
+from pyclowder.utils import CheckMessage
+import pyclowder.files
 
 
-def main():
-    global extractorName, messageType, rabbitmqExchange, rabbitmqURL, logger, hashList, registrationEndpoints
+class FileDigestCalculator(Extractor):
+    def __init__(self):
+        Extractor.__init__(self)
 
-    # set logging
-    logging.basicConfig(format='%(asctime)-15s %(levelname)-7s : %(name)s - %(message)s', level=logging.INFO)
-    logging.getLogger('pyclowder.extractors').setLevel(logging.DEBUG)
-    logger = logging.getLogger(extractorName)
-    logger.setLevel(logging.DEBUG)
+        # add any additional arguments to parser
+        # self.parser.add_argument('--max', '-m', type=int, nargs='?', default=-1,
+        #                          help='maximum number (default=-1)')
+        self.parser.add_argument('--hashes', dest="hash_list", type=str, nargs='?',
+                                 default='["md5","sha1","sha224","sha256","sha384","sha512"]',
+                                 help="list of hash types to calculate")
 
-    if isinstance(hashList,str):
-        hashList = hashList.replace("[","").replace("]","").replace("'","").split(",")
+        # parse command line and load default logging configuration
+        self.setup()
 
-    # connect to rabbitmq
-    extractors.connect_message_bus(extractorName=extractorName,
-                                   messageType=messageType,
-                                   processFileFunction=process_file,
-                                   rabbitmqExchange=rabbitmqExchange,
-                                   rabbitmqURL=rabbitmqURL,
-                                   checkMessageFunction=check_message)
+        # setup logging for the exctractor
+        logging.getLogger('pyclowder').setLevel(logging.DEBUG)
+        logging.getLogger('__main__').setLevel(logging.DEBUG)
 
+        # assign other arguments
+        self.hash_list = json.loads(self.args.hash_list)
 
+    # Check whether dataset already has metadata
+    def check_message(self, connector, host, secret_key, resource, parameters):
+        return CheckMessage.bypass
 
-# ----------------------------------------------------------------------
-# We will stream the file ourselves here, instead of returning True and downloading to process_file()
-def check_message(parameters):
-    # Bypass downloading of this file for process_file() - we'll handle streaming it ourselves
-    return "bypass"
+    def process_message(self, connector, host, secret_key, resource, parameters):
+        url = '%s/api/files/%s/blob?key=%s' % (host, resource['id'], secret_key)
 
-def process_file(parameters):
-    # Prepare target URL
-    fileTarget = parameters['host']
-    fileTarget += "/" if fileTarget[0] != "/" else ""
-    fileTarget += "api/files/%s/blob?key=%s" % (parameters['id'], parameters['secretKey'])
+        logging.debug("sending request for digest streaming: "+url)
+        r = requests.get(url, stream=True)
 
-    logger.debug("sending request for digest streaming: "+fileTarget)
-    r = requests.get(fileTarget, stream=True)
+        # Prepare hash objects
+        hashes = {}
+        for alg in self.hash_list:
+            hashes[alg] = hashlib.new(alg)
 
-    # Prepare hash objects
-    hashes = {}
-    for alg in hashList:
-        hashes[alg] = hashlib.new(alg)
+        # Stream file and update hashes
+        for chunk in r.iter_content():
+            for hash in hashes.itervalues():
+                hash.update(chunk)
 
-    # Stream file and update hashes
-    for chunk in r.iter_content():
-        for hash in hashes.itervalues():
-            hash.update(chunk)
+        # Generate final hex hash
+        hashDigest = {}
+        for (k,v) in hashes.iteritems():
+            hashDigest[k] = v.hexdigest()
 
-    # Generate final hex hash
-    hashDigest = {}
-    for (k,v) in hashes.iteritems():
-        hashDigest[k] = v.hexdigest()
+        # Generate JSON-LD context
+        hashContext = {}
+        for alg in self.hash_list:
+            hashContext[alg] = "http://www.w3.org/2001/04/xmldsig-more#%s" % alg
 
-    # Generate JSON-LD context
-    hashContext = {}
-    for alg in hashList:
-        hashContext[alg] = "http://www.w3.org/2001/04/xmldsig-more#%s" % alg
-
-    # store results as metadata
-    metadata = {
-        "@context": ["https://clowder.ncsa.illinois.edu/contexts/metadata.jsonld", hashContext],
-        "dataset_id": parameters["datasetId"],
-        "content": hashDigest,
-        "agent": {
-            "@type": "cat:extractor",
-            "extractor_id": parameters['host'] + "/api/extractors/" + extractorName
+        # store results as metadata
+        metadata = {
+            "@context": ["https://clowder.ncsa.illinois.edu/contexts/metadata.jsonld", hashContext],
+            "dataset_id": resource["parent_dataset_id"],
+            "content": hashDigest,
+            "agent": {
+                "@type": "cat:extractor",
+                "extractor_id": host + "/api/extractors/" + self.extractor_info['name']
+            }
         }
-    }
 
-    extractors.upload_file_metadata_jsonld(mdata=metadata, parameters=parameters)
+        pyclowder.files.upload_metadata(connector, host, secret_key, resource['id'], metadata)
 
 if __name__ == "__main__":
-    main()
+    extractor = FileDigestCalculator()
+    extractor.start()
