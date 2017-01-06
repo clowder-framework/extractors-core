@@ -1,5 +1,5 @@
 # FROM clowder/python-base
-FROM ncsa/clowder-extractors-python-base:2
+FROM clowder/pyclowder:2
 MAINTAINER Max Burnette <mburnet2@illinois.edu>
 
 # Install any programs needed
