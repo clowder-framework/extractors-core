@@ -2,16 +2,11 @@
 FROM clowder/pyclowder:2
 MAINTAINER Max Burnette <mburnet2@illinois.edu>
 
-# Install any programs needed
-USER root
-RUN apt-get update \
-    && rm -rf /var/lib/apt/lists/*   
-
 # Switch to clowder, copy files and be ready to run
 USER clowder
 
 # command to run when starting docker
-COPY entrypoint.sh *.py /home/clowder/
+COPY entrypoint.sh *.py extractor_info.json /home/clowder/
 ENTRYPOINT ["/home/clowder/entrypoint.sh"]
 CMD ["extractor"]
 
