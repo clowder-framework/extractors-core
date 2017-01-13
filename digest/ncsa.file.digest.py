@@ -61,10 +61,15 @@ class FileDigestCalculator(Extractor):
         for alg in self.hash_list:
             hashContext[alg] = "http://www.w3.org/2001/04/xmldsig-more#%s" % alg
 
+        if 'id' in resource['parent']:
+            datasetid = resource['parent']['id']
+        else:
+            datasetid = ''
+
         # store results as metadata
         metadata = {
             "@context": ["https://clowder.ncsa.illinois.edu/contexts/metadata.jsonld", hashContext],
-            "dataset_id": resource["parent_dataset_id"],
+            "dataset_id": datasetid,
             "content": hashDigest,
             "agent": {
                 "@type": "cat:extractor",
