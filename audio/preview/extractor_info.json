@@ -6,7 +6,16 @@
     "author": "Rob Kooper <koooper@illinois.edu>",
     "contributors": [],
     "contexts": [],
-    "repository": {"repType": "git", "repUrl": "https://opensource.ncsa.illinois.edu/bitbucket/scm/cats/extractors-core.git"},
+    "repository": [
+      {
+        "repType": "git",
+        "repUrl": "https://opensource.ncsa.illinois.edu/bitbucket/scm/cats/extractors-core.git"
+      },
+      {
+        "repType": "docker",
+        "repUrl": "clowder/extractors-audio-preview"
+      }
+    ],
     "external_services": [],
     "dependencies": ["sox-fmt-mp3", "sox"],
     "bibtex": [""]

@@ -6,7 +6,16 @@
     "author": "Rob Kooper <koooper@illinois.edu>",
     "contributors": ["Sandeep Puthanveetil Satheesan <sandeeps@illinois.edu>"],
     "contexts": [],
-    "repository": {"repType": "git", "repUrl": "https://opensource.ncsa.illinois.edu/bitbucket/scm/cats/extractors-core.git"},
+    "repository": [
+        {
+            "repType": "git",
+            "repUrl": "https://opensource.ncsa.illinois.edu/bitbucket/scm/cats/extractors-core.git"
+        },
+        {
+            "repType": "docker",
+            "repUrl": "clowder/extractors-image-preview"
+        }
+    ],
     "external_services": [],
     "dependencies": ["imagemagick", "ufraw-batch"],
     "bibtex": [""]

@@ -2,11 +2,20 @@
     "@context": "http://clowder.ncsa.illinois.edu/contexts/extractors.jsonld",
     "name": "ncsa.video.preview",
     "version": "1.0",
-    "description": "Creates thubmnail and image previews of Video files, as well as downscaled video preview",
+    "description": "Creates thumbnail and image previews of Video files, as well as downscaled video preview",
     "author": "Rob Kooper <koooper@illinois.edu>",
     "contributors": [],
     "contexts": [],
-    "repository": {"repType": "git", "repUrl": "https://opensource.ncsa.illinois.edu/bitbucket/scm/cats/extractors-core.git"},
+    "repository": [
+        {
+            "repType": "git",
+            "repUrl": "https://opensource.ncsa.illinois.edu/bitbucket/scm/cats/extractors-core.git"
+        },
+        {
+            "repType": "docker",
+            "repUrl": "clowder/extractors-video-preview"
+        }
+    ],
     "external_services": [],
     "dependencies": ["libav-tools"],
     "bibtex": [""]
