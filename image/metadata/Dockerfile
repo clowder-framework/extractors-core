@@ -1,5 +1,5 @@
 # FROM clowder/python-base
-FROM ncsa/clowder-extractors-python-base
+FROM clowder/pyclowder:1
 MAINTAINER Rob Kooper <kooper@illinois.edu>
 
 # Setup environment variables. These are passed into the container. You can change
