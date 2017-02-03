@@ -11,4 +11,4 @@ To install and run the python extractor do the following:
 2. Start extractor `python ncsa.file.digest.py`
 
 # Building Docker Image
-`docker build -t ncsa/clowder-extractors-digest:latest .`
+`docker build -t clowder/extractors-digest:latest .`

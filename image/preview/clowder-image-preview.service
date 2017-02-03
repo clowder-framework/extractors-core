@@ -9,8 +9,8 @@ RestartSec=60
 Restart=always
 ExecStartPre=-/usr/bin/docker kill clowder-image-preview
 ExecStartPre=-/usr/bin/docker rm clowder-image-preview
-ExecStartPre=/usr/bin/docker pull ncsa/clowder-extractors-image-preview:latest
-ExecStart=/usr/bin/docker run --name clowder-image-preview -e "RABBITMQ_QUEUE=ncsa.image.preview" -e "RABBITMQ_URI=amqp://guest:guest@rabbitmq/clowder-dev" -e "RABBITMQ_EXCHANGE=clowder" ncsa/clowder-extractors-image-preview
+ExecStartPre=/usr/bin/docker pull clowder/extractors-image-preview:latest
+ExecStart=/usr/bin/docker run --name clowder-image-preview -e "RABBITMQ_QUEUE=ncsa.image.preview" -e "RABBITMQ_URI=amqp://guest:guest@rabbitmq/clowder-dev" -e "RABBITMQ_EXCHANGE=clowder" clowder/extractors-image-preview
 
 [Install]
 WantedBy=multi-user.target
