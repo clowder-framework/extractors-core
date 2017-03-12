@@ -62,7 +62,7 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.4.1.1</version>
+			<version>2.7.4</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -78,12 +78,12 @@
 		<dependency>
   			<groupId>edu.cmu.sphinx</groupId>
  			<artifactId>sphinx4-core</artifactId>
- 			<version>1.0-SNAPSHOT</version>
+ 			<version>5prealpha-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			  <groupId>edu.cmu.sphinx</groupId>
 			  <artifactId>sphinx4-data</artifactId>
-			  <version>1.0-SNAPSHOT</version>
+			  <version>5prealpha-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 		    <groupId>org.json</groupId>

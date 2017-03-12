@@ -1,0 +1,26 @@
+{
+  "@context": "http://clowder.ncsa.illinois.edu/contexts/extractors.jsonld",
+  "name": "ncsa.speech2text",
+  "version": "1.0",
+  "description": "Converts mp3 with spoken English to text",
+  "author": "Marcus Slavenas <slavenas@illinois.edu>",
+  "contributors": [],
+  "contexts": [
+    {
+      "phrases": "http://clowder.ncsa.illinois.edu/metadata/ncsa.speech2text#phrases"
+    }
+  ],
+  "repository": {
+    "repType": "git",
+    "repUrl": "https://opensource.ncsa.illinois.edu/bitbucket/projects/CATS/repos/speech2text"
+  },
+  "process": {
+    "file": [
+      "audio.*",
+      "application/json"
+    ]
+  },
+  "external_services": [],
+  "dependencies": ["ffmpeg","cmusphinx"],
+  "bibtex": []
+}

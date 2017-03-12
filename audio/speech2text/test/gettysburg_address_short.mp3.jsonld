@@ -1,0 +1,33 @@
+{
+	"@context": [
+		"https://clowder.ncsa.illinois.edu/contexts/metadata.jsonld",
+		{
+			"phrases": "http://clowder.ncsa.illinois.edu/metadata/ncsa.audio.speech2text#phrases"
+		}
+	],
+	"created_at": "Thu Mar 09 20:53:35 UTC 2017",
+	"agent": {
+		"@type": "cat:extractor",
+		"name": "https://clowder.ncsa.illinois.edu/clowder/api/extractors/ncsa.audio.speech2text",
+		"extractor_id": "https://clowder.ncsa.illinois.edu/clowder/api/extractors/ncsa.audio.speech2text"
+	},
+	"content": {
+		"phrases": {
+			"phrase0": [
+				"<s> four score and seven years ago our fathers </s>"
+			],
+			"phrase1": [
+				"<s> for all forced on this continent the new nation </s>"
+			],
+			"phrase2": [
+				"<s> conceived in liberty </s>"
+			],
+			"phrase3": [
+				"<s> and dedicated to the proposition </s>"
+			],
+			"phrase4": [
+				"<s> but all manner </s>"
+			]
+		}
+	}
+}
