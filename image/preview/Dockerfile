@@ -1,5 +1,4 @@
-# FROM clowder/python-base
-FROM ncsa/clowder-extractors-python-base
+FROM clowder/pyclowder:1
 MAINTAINER Rob Kooper <kooper@illinois.edu>
 
 
