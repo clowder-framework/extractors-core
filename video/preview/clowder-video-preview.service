@@ -9,8 +9,8 @@ RestartSec=60
 Restart=always
 ExecStartPre=-/usr/bin/docker kill clowder-video-preview
 ExecStartPre=-/usr/bin/docker rm clowder-video-preview
-ExecStartPre=/usr/bin/docker pull ncsa/clowder-extractors-video-preview:latest
-ExecStart=/usr/bin/docker run --name clowder-video-preview -e "RABBITMQ_QUEUE=ncsa.video.preview" -e "RABBITMQ_URI=amqp://guest:guest@rabbitmq/clowder-dev" -e "RABBITMQ_EXCHANGE=clowder" ncsa/clowder-extractors-video-preview
+ExecStartPre=/usr/bin/docker pull clowder/extractors-video-preview:latest
+ExecStart=/usr/bin/docker run --name clowder-video-preview -e "RABBITMQ_QUEUE=ncsa.video.preview" -e "RABBITMQ_URI=amqp://guest:guest@rabbitmq/clowder-dev" -e "RABBITMQ_EXCHANGE=clowder" clowder/extractors-video-preview
 
 [Install]
 WantedBy=multi-user.target

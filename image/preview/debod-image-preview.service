@@ -9,8 +9,8 @@ RestartSec=60
 Restart=always
 ExecStartPre=-/usr/bin/docker kill debod-image-preview
 ExecStartPre=-/usr/bin/docker rm debod-image-preview
-ExecStartPre=/usr/bin/docker pull ncsa/clowder-extractors-image-preview:latest
-ExecStart=/usr/bin/docker run --name debod-image-preview -e "THUMBNAIL_FLAGS=-set colorspace RGB -resize 225^ -brightness-contrast 2x6% -colorspace sRGB" -e "PREVIEW_FLAGS=-set colorspace RGB -resize 800x600 -brightness-contrast 2x6% -colorspace sRGB" -e "RABBITMQ_QUEUE=ncsa.image.preview.debod" -e "RABBITMQ_URI=amqp://guest:guest@rabbitmq/clowder-dev" -e "RABBITMQ_EXCHANGE=debod" ncsa/clowder-extractors-image-preview
+ExecStartPre=/usr/bin/docker pull clowder/extractors-image-preview:latest
+ExecStart=/usr/bin/docker run --name debod-image-preview -e "THUMBNAIL_FLAGS=-set colorspace RGB -resize 225^ -brightness-contrast 2x6% -colorspace sRGB" -e "PREVIEW_FLAGS=-set colorspace RGB -resize 800x600 -brightness-contrast 2x6% -colorspace sRGB" -e "RABBITMQ_QUEUE=ncsa.image.preview.debod" -e "RABBITMQ_URI=amqp://guest:guest@rabbitmq/clowder-dev" -e "RABBITMQ_EXCHANGE=debod" clowder/extractors-image-preview
 
 [Install]
 WantedBy=multi-user.target

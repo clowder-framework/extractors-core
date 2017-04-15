@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -45,17 +46,13 @@ public class ExtractText {
     // ----------------------------------------------------------------------
 
     // name where rabbitmq is running
-    private static String rabbitmqHost; // = "localhost";
+    private static String rabbitmqURI; // = "localhost";
 
     // name to show in rabbitmq queue list   
     private static String exchange; // = "medici";
     
     // name to show in rabbitmq queue list
     private static String extractorName; // = "audio2text";
-
-    // username and password to connect to rabbitmq
-    private static String username; // = null;
-    private static String password; // = null;
 
     // accept any type of file that is audio
     private static String messageType; // = "*.file.audio.#";
@@ -83,22 +80,20 @@ public class ExtractText {
     		e.printStackTrace();
     	}
     	
-    	rabbitmqHost = props.getProperty("rabbitmqHost");
-    	exchange = props.getProperty("exchange");
-    	extractorName = props.getProperty("extractorName");
-    	username = props.getProperty("rabbitmqUsername");
-    	if(username.equals("null")){username=null;}
-    	password = props.getProperty("rabbitmqPassword");
-    	if(password.equals("null")){password=null;}
-    	messageType = props.getProperty("messageType");
+    	rabbitmqURI = props.getProperty("rabbitmqURI","amqp://guest:guest@127.0.0.1:5672/%2f");
+    	exchange = props.getProperty("exchange","clowder");
+    	extractorName = props.getProperty("extractorName","ncsa.audio.speech2text");
+    	messageType = "*.file.audio.#";
+
+        // get rabbitmqURI from system env if using docker
+        if(System.getenv("RABBITMQ_URI") != null){
+            rabbitmqURI = System.getenv("RABBITMQ_URI");
+        }
     	  	     	    
         // setup connection parameters
         ConnectionFactory factory = new ConnectionFactory();
-        factory.setHost(rabbitmqHost);
-        if ((username != null) && (password != null)) {
-            factory.setUsername(username);
-            factory.setPassword(password);
-        }
+        factory.setUri(rabbitmqURI);
+
 
         // connect to rabbitmq
         Connection connection = factory.newConnection();
@@ -152,6 +147,8 @@ public class ExtractText {
             // process file
             processFile(channel, header, host, secretKey, fileid, intermediatefileid, inputfile);
 
+            inputfile.delete();
+
             // send ack that we are done
             channel.basicAck(tag, false);
         } catch (Throwable thr) {
@@ -197,7 +194,7 @@ public class ExtractText {
         statusUpdate(channel, header, fileid, "Downloading file");
         
         URL source = new URL(host + "api/files/" + intermediatefileid + "?key=" + key);
-        URL metadataUrl = new URL(host + "api/files/" + intermediatefileid + "/metadata");
+        URL metadataUrl = new URL(host + "api/files/" + intermediatefileid + "/metadata?key=" + key);
         
 //== GET FILE TYPE ======================================
         //TODO: there is probably a simpler way to get this from the json
@@ -224,8 +221,9 @@ public class ExtractText {
 		File inputFile = File.createTempFile("medici","."+fileType);
 		inputFile.deleteOnExit();
 		FileUtils.copyURLToFile(source, inputFile);
-			
-		File outputFile = inputFile; //TODO: is it ok to leave this as default and only change if needed
+	
+
+//		File outputFile = inputFile; //what's the point of this, think when I wrote this I forgot that this is a reference not a  copy
 		
 ////=== GET FILE INFO FROM ffmpeg ================================================	
 //		ProcessBuilder pb = new ProcessBuilder("ffmpeg","-i",inputFile.toString());
@@ -266,43 +264,52 @@ public class ExtractText {
 //		}		
 //		System.out.println(audioData.toString());   
 		    
-//=== COVERT FILE TO FORMAT THAT SPHINX CAN USE =================================		  		
-		if(fileType.equals("mp3")){
-			System.out.println("Converting mp3 to wav");
-			// convert bitrat and bandwidth
-			String intermediateFileName = "/tmp/intermediate.wav";
+//=== COVERT FILE TO FORMAT THAT SPHINX CAN USE =================================
+
+
+		String outputFileName = "/tmp/outfile.wav";
+        File outputFile = new File(outputFileName);
+
+        System.out.println("Converting");
+		// convert bitrat and bandwidth
+		String intermediateFileName = "/tmp/intermediate.wav";
+        try{
 			String convertCmd = "ffmpeg -i " + inputFile + " -acodec pcm_s16le -ar 16000 " + intermediateFileName;
 			Process convertOut = Runtime.getRuntime().exec(convertCmd);
-			File intermediateFile = new File(intermediateFileName);
+            //convertOut.waitFor(); //This does not work, it is blocked
+                        
+            File intermediateFile = new File(intermediateFileName);
+            while(intermediateFile.exists()== false){
+                Thread.sleep(30); //if used less time, less number of phrases are extracted
+            }
+            System.out.println("File is created now:"+ intermediateFileName);
+
 			// make sure it's mono
-			String outputFileName = "/tmp/outfile.wav";
+			
 			String convertCmd2 = "ffmpeg -i " + intermediateFile + " -ac 1 " + outputFileName;
-			Process convertOut2 = Runtime.getRuntime().exec(convertCmd2);
-			outputFile = new File(outputFileName);
 			
-			
-			
-			
-		}
-		else if(fileType.equals("wav")){	
-			System.out.println("Converting wav to wav");
-			// convert bitrat and bandwidth
-			String intermediateFileName = "/tmp/intermediate.wav";
-			String convertCmd = "ffmpeg -i " + inputFile + " -acodec pcm_s16le -ar 16000 " + intermediateFileName;
-			Process convertOut = Runtime.getRuntime().exec(convertCmd);
-			File intermediateFile = new File(intermediateFileName);
-			// make sure it's mono
-			String outputFileName = "/tmp/outfile.wav";
-			String convertCmd2 = "ffmpeg -i " + intermediateFile + " -ac 1 " + outputFileName;
-			Process convertOut2 = Runtime.getRuntime().exec(convertCmd2);
-			outputFile = new File(outputFileName);
-		}
-		else{
-			System.out.println("Unsupported File Type" + fileType);
-			outputFile = inputFile;
-		}
+            Process convertOut2 = Runtime.getRuntime().exec(convertCmd2);
+            
+            
+            while(!outputFile.exists()){
+                System.out.println("File does not exist yet" + outputFileName);
+                Thread.sleep(30);
+            }
+            System.out.println("File is created now:"+ outputFileName);
+                    // clean up intermediate file
+            if(intermediateFile.exists()){
+                System.out.println("Deleting intermediate file");
+                intermediateFile.delete();
+            }
+
 				             
-        System.out.println("Output File: " + outputFile);
+            System.out.println("Output File: " + outputFile);
+            if(inputFile.exists()){
+                inputFile.delete();
+            }
+        } catch (Exception e){
+            System.out.println("Conversion Failed");
+        }
         
         return outputFile;
     }
@@ -313,23 +320,23 @@ public class ExtractText {
         statusUpdate(channel, header, fileid, "Processing audio file to text");        
 
         Configuration configuration = new Configuration();
-	
-//	configuration.setSampleRate(8000)   Haven't used but curious about setting sample rate
-	
-	// Set path to acoustic model.
-	configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
-	// Set path to dictionary.
-	configuration.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
-	// Set language model.
-	configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.dmp");
 
-//        configuration.setAcousticModelPath("resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz"); 
-//	  configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/acoustic/wsj/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz");
-//        configuration.setAcousticModelPath("resource:/WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz");        
-//        configuration.setDictionaryPath("resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d");
-//        configuration.setDictionaryPath("file:/home/marcuss/Desktop/software/sphinx4/sphinx4-5prealpha/models/acoustic/wsj/dict/cmudict.0.6d");
-//        //this is a text file dictionary with spelling and phonemes 
-//        configuration.setLanguageModelPath("/home/marcuss/Desktop/workspace_sphinx/test_sphinx/models/en-us.lm.dmp");
+        //	configuration.setSampleRate(8000)   Haven't used but curious about setting sample rate
+    	
+    	// Set path to acoustic model.
+    	configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us");
+    	// Set path to dictionary.
+    	configuration.setDictionaryPath("resource:/edu/cmu/sphinx/models/en-us/cmudict-en-us.dict");
+    	// Set language model.
+    	configuration.setLanguageModelPath("resource:/edu/cmu/sphinx/models/en-us/en-us.lm.bin");
+
+        //        configuration.setAcousticModelPath("resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz"); 
+        //	  configuration.setAcousticModelPath("resource:/edu/cmu/sphinx/models/acoustic/wsj/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz");
+        //        configuration.setAcousticModelPath("resource:/WSJ_8gau_13dCep_8kHz_31mel_200Hz_3500Hz");        
+        //        configuration.setDictionaryPath("resource:/WSJ_8gau_13dCep_16k_40mel_130Hz_6800Hz/dict/cmudict.0.6d");
+        //        configuration.setDictionaryPath("file:/home/marcuss/Desktop/software/sphinx4/sphinx4-5prealpha/models/acoustic/wsj/dict/cmudict.0.6d");
+        //        //this is a text file dictionary with spelling and phonemes 
+        //        configuration.setLanguageModelPath("/home/marcuss/Desktop/workspace_sphinx/test_sphinx/models/en-us.lm.dmp");
 
         StreamSpeechRecognizer recognizer = 
             new StreamSpeechRecognizer(configuration);
@@ -339,40 +346,72 @@ public class ExtractText {
         System.out.println("filenameString: " + filenameString);
         recognizer.startRecognition(new URL(filenameString).openStream());
         //=== NEED TO CHECK ABOUT wav format: does it need to be 16 khz 16bit mono?
-        
-//        tried running bush_god_bless.wav after       
-//        ffmpeg -i bush_god_bless.wav -acodec pcm_s16le -ac 1 -ar 16000 out.wav       
-//        it takes time, where the running with the un-converted does not
-//        original:  Metadata: {} 
-//        converted: outputs "processing phrase1" and Metadata: {phrase0=[]}
-//		 works!, but poor accuracy ffmpeg -i 903708.mp3 -acodec pcm_s16le -ar 16000 out7.wav
-//	high_quality.wav (bush_god_bless) came through with 100% accuracy - investigate
 
         SpeechResult result;
         
+        String contextURL = "https://clowder.ncsa.illinois.edu/contexts/metadata.jsonld";
+        
+        ArrayList contextArray = new ArrayList();
         Map<String, Object> metadata = new HashMap<String, Object>();
+        Map<String, Object> contextObject = new HashMap<String, Object>();
+        Map<String, Object> phrases = new HashMap<String, Object>();
+        Map<String, Object> phraseObject = new HashMap<String, Object>();
+        Map<String, Object> attachedTo = new HashMap<String, Object>();
+        Map<String, Object> agent = new HashMap<String, Object>();
+
         int numPhrases = 0;
         while ((result = recognizer.getResult()) != null) {       	
         	System.out.println("Processing Phrase " + numPhrases);
                    
             String phraseName = "phrase" + numPhrases;
-			metadata.put(phraseName, result.getNbest(1));
-			numPhrases++;           
+			//metadata.put(phraseName, result.getNbest(1));
+            phrases.put(phraseName, result.getNbest(1));
+            numPhrases++;           
         }
 
         recognizer.stopRecognition();
-            
+        phraseObject.put("phrases", phrases);
+        
+        // Required fields for JSON_LD
+        contextObject.put("phrases", "http://clowder.ncsa.illinois.edu/"+ extractorName + "#phrases");
+        contextArray.add(contextURL);
+        contextArray.add(contextObject);
+
+        attachedTo.put("resourceType", "file");
+        attachedTo.put("id", fileid);        
+        
+        agent.put("@type", "cat:extractor");
+        agent.put("extractor_id", "https://clowder.ncsa.illinois.edu/clowder/api/extractors/" + extractorName);
+        
+        metadata.put("@context", contextArray);
+        metadata.put("attachedTo", attachedTo);
+        metadata.put("agent", agent);
+        metadata.put("content", phraseObject);  
+
+        // Gson gson = new GsonBuilder().create();
+        // String metadataJson = gson.toJson(metadata);  
+        
         System.out.println("Finished Processing");  
         System.out.println("Metadata: " + metadata);
         
         postMetaData(host, key, fileid, metadata);
+
+        // clean up 
+        if(inputfile.exists()){
+            inputfile.delete();
+        }
+
+        
     }
 
 /// POST METADATA TO MEDICI //////////////////////////////////////////////////////////////////////
     
     private String postMetaData(String host, String key, String fileid, Map<String, Object> metadata)
             throws IOException {
-        URL url = new URL(host + "api/files/" + fileid + "/metadata?key=" + key);
+        
+        //Deprecated API: URL url = new URL(host + "api/files/" + fileid + "/metadata?key=" + key);
+        // New Json-ld Metadata API
+        URL url = new URL(host + "api/files/" + fileid + "/metadata.jsonld?key=" + key);
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
@@ -402,14 +441,3 @@ public class ExtractText {
     }
 }
 
-
-//System.out.format("Hypothesis: %s\n",
-//result.getHypothesis());                             
-//System.out.println("List of recognized words and their times:");
-//for (WordResult r : result.getWords()) {
-//System.out.println(r);
-//}
-//System.out.println("Best 3 hypothesis:");            
-//for (String s : result.getNbest(3))
-//System.out.println(s);
-//System.out.println("Lattice contains " + result.getLattice().getNodes().size() + " nodes");
