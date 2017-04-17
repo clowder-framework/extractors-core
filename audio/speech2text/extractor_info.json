@@ -10,10 +10,16 @@
       "phrases": "http://clowder.ncsa.illinois.edu/metadata/ncsa.speech2text#phrases"
     }
   ],
-  "repository": {
-    "repType": "git",
-    "repUrl": "https://opensource.ncsa.illinois.edu/bitbucket/projects/CATS/repos/speech2text"
-  },
+  "repository": [
+    {
+      "repType": "git",
+      "repUrl": "https://opensource.ncsa.illinois.edu/bitbucket/projects/CATS/repos/extractors-core/browse/audio/speech2text"
+    },
+    {
+      "repType": "docker",
+      "repUrl": "clowder/extractors-speech2text"
+    }
+  ],
   "process": {
     "file": [
       "audio.*",
