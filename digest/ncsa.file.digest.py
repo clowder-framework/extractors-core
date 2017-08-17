@@ -36,9 +36,10 @@ class FileDigestCalculator(Extractor):
         return CheckMessage.bypass
 
     def process_message(self, connector, host, secret_key, resource, parameters):
-        url = '%s/api/files/%s/blob?key=%s' % (host, resource['id'], secret_key)
+        logger = logging.getLogger('__main__')
+        url = '%sapi/files/%s/blob?key=%s' % (host, resource['id'], secret_key)
 
-        logging.debug("sending request for digest streaming: "+url)
+        logger.debug("sending request for digest streaming: "+url)
         r = requests.get(url, stream=True)
 
         # Prepare hash objects
@@ -68,7 +69,7 @@ class FileDigestCalculator(Extractor):
             "content": hashDigest,
             "agent": {
                 "@type": "cat:extractor",
-                "extractor_id": host + "/api/extractors/" + self.extractor_info['name']
+                "extractor_id": host + "api/extractors/" + self.extractor_info['name']
             }
         }
 
