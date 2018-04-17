@@ -1,28 +1,10 @@
-FROM clowder/pyclowder:1
-MAINTAINER Rob Kooper <kooper@illinois.edu>
+FROM clowder/extractors-binary-preview:onbuild
 
-# Setup environment variables. These are passed into the container. You can change
-# these to your setup. If RABBITMQ_URI is not set, it will try and use the rabbitmq
-# server that is linked into the container. MAIN_SCRIPT is set to the script to be
-# executed by entrypoint.sh
-ENV RABBITMQ_URI="" \
-    RABBITMQ_EXCHANGE="clowder" \
-    RABBITMQ_VHOST="%2F" \
-    RABBITMQ_QUEUE="ncsa.audio.preview" \
-    REGISTRATION_ENDPOINTS="https://clowder.ncsa.illinois.edu/extractors" \
-    MAIN_SCRIPT="ncsa.audio.preview.py"
-
-# Install any programs needed
-USER root
-RUN apt-get update && apt-get install -y \
-       libsox-fmt-mp3 \
-       sox \
-    && rm -rf /var/lib/apt/lists/*   
-
-# Switch to clowder, copy files and be ready to run
-USER clowder
-
-# command to run when starting docker
-COPY entrypoint.sh *.py extractor_info.json /home/clowder/
-ENTRYPOINT ["/home/clowder/entrypoint.sh"]
-CMD ["extractor"]
+ENV RABBITMQ_QUEUE="ncsa.audio.preview" \
+    IMAGE_BINARY="/usr/bin/sox" \
+    IMAGE_TYPE="png" \
+    IMAGE_THUMBNAIL_COMMAND="@BINARY@ --magic @INPUT@ -n spectrogram -r -x 225 -y 200 -o @OUTPUT@" \
+    IMAGE_PREVIEW_COMMAND="@BINARY@ --magic @INPUT@ -n spectrogram -x 800 -Y 600 -o @OUTPUT@" \
+    PREVIEW_BINARY="/usr/bin/sox" \
+    PREVIEW_TYPE="mp3" \
+    PREVIEW_COMMAND="@BINARY@ --magic @INPUT@ @OUTPUT@"

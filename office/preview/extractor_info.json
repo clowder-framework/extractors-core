@@ -1,7 +1,7 @@
 {
     "@context": "http://clowder.ncsa.illinois.edu/contexts/extractors.jsonld",
     "name": "ncsa.office.preview",
-    "version": "1.0",
+    "version": "2.0.0",
     "description": "Creates previews of Office files, both thumbnail as well as a PDF preview.",
     "author": "Rob Kooper <koooper@illinois.edu>",
     "contributors": [],
@@ -17,6 +17,39 @@
         }
     ],
     "external_services": [],
+    "process": {
+        "file": [
+            "application/msword",
+            "application/excel",
+            "application/vnd_openxmlformats-officedocument_wordprocessingml_document",
+            "application/vnd_openxmlformats-officedocument_spreadsheetml_sheet",
+            "application/vnd_openxmlformats-officedocument_presentationml_presentation",
+            "application/vnd_openxmlformats-officedocument_presentationml_slideshow",
+            "application/vnd_ms-word_document_macroEnabled_12",
+            "application/vnd_ms-excel",
+            "application/vnd_ms-excel_sheet_macroEnabled_12",
+            "application/vnd_ms-excel_addin_macroEnabled_12",
+            "application/vnd_ms-excel_sheet_binary_macroEnabled_12",
+            "application/vnd_ms-powerpoint",
+            "application/vnd_ms-powerpoint_addin_macroEnabled_12",
+            "application/vnd_ms-powerpoint_presentation_macroEnabled_12",
+            "application/vnd_ms-powerpoint_slideshow_macroEnabled_12",
+            "application/vnd_oasis_opendocument_text",
+            "application/vnd_oasis_opendocument_text-template",
+            "application/vnd_oasis_opendocument_text-web",
+            "application/vnd_oasis_opendocument_text-master",
+            "application/vnd_oasis_opendocument_graphics",
+            "application/vnd_oasis_opendocument_graphics-template",
+            "application/vnd_oasis_opendocument_presentation",
+            "application/vnd_oasis_opendocument_presentation-template",
+            "application/vnd_oasis_opendocument_spreadsheet",
+            "application/vnd_oasis_opendocument_spreadsheet-template",
+            "application/vnd_oasis_opendocument_chart",
+            "application/vnd_oasis_opendocument_formula",
+            "application/vnd_oasis_opendocument_database",
+            "application/vnd_oasis_opendocument_image"
+        ]
+    },
     "dependencies": ["libreoffice", "imagemagick"],
     "bibtex": [""]
 }

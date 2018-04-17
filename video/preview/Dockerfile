@@ -1,27 +1,10 @@
-FROM clowder/pyclowder:1
-MAINTAINER Rob Kooper <kooper@illinois.edu>
+FROM clowder/extractors-binary-preview:onbuild
 
-# Setup environment variables. These are passed into the container. You can change
-# these to your setup. If RABBITMQ_URI is not set, it will try and use the rabbitmq
-# server that is linked into the container. MAIN_SCRIPT is set to the script to be
-# executed by entrypoint.sh
-ENV RABBITMQ_URI="" \
-    RABBITMQ_EXCHANGE="clowder" \
-    RABBITMQ_VHOST="%2F" \
-    RABBITMQ_QUEUE="ncsa.video.preview" \
-    REGISTRATION_ENDPOINTS="https://clowder.ncsa.illinois.edu/extractors" \
-    MAIN_SCRIPT="ncsa.video.preview.py"
-
-# Install any programs needed
-USER root
-RUN apt-get update && apt-get install -y \
-       libav-tools \
-    && rm -rf /var/lib/apt/lists/*   
-
-# Switch to clowder, copy files and be ready to run
-USER clowder
-
-# command to run when starting docker
-COPY entrypoint.sh *.py extractor_info.json /home/clowder/
-ENTRYPOINT ["/home/clowder/entrypoint.sh"]
-CMD ["extractor"]
+ENV RABBITMQ_QUEUE="ncsa.video.preview" \
+    IMAGE_BINARY="/usr/bin/avconv" \
+    IMAGE_TYPE="png" \
+    IMAGE_THUMBNAIL_COMMAND="@BINARY@ -y -i @INPUT@ -ss 1 -t 1 -r 1 -vcodec png -f rawvideo -vf scale=225:-1 @OUTPUT@" \
+    IMAGE_PREVIEW_COMMAND="@BINARY@ -y -i @INPUT@ -ss 1 -t 1 -r 1 -vcodec png -f rawvideo @OUTPUT@" \
+    PREVIEW_BINARY="/usr/bin/avconv" \
+    PREVIEW_TYPE="mp4" \
+    PREVIEW_COMMAND="@BINARY@ -y -i @INPUT@ -c:v libx264 -profile:v baseline -preset slow -vf scale=-1:'if(gt(ih,360),360,ih)' -strict experimental -c:a aac -b:a 48k -movflags +faststart @OUTPUT@"

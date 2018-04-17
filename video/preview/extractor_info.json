@@ -1,7 +1,7 @@
 {
     "@context": "http://clowder.ncsa.illinois.edu/contexts/extractors.jsonld",
     "name": "ncsa.video.preview",
-    "version": "1.0",
+    "version": "2.0.0",
     "description": "Creates thumbnail and image previews of Video files, as well as downscaled video preview",
     "author": "Rob Kooper <koooper@illinois.edu>",
     "contributors": [],
@@ -17,6 +17,11 @@
         }
     ],
     "external_services": [],
+    "process": {
+        "file": [
+            "video/*"
+        ]
+    },
     "dependencies": ["libav-tools"],
     "bibtex": [""]
 }

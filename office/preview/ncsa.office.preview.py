@@ -2,96 +2,120 @@
 
 import logging
 import os
+import re
 import subprocess
 import tempfile
-import re
-from config import *
-import pyclowder.extractors as extractors
+
+from pyclowder.extractors import Extractor
+import pyclowder.files
+import pyclowder.utils
 
 
-def main():
-    global extractorName, messageType, rabbitmqExchange, rabbitmqURL, logger, registrationEndpoints
+class OfficePreviewExtractor(Extractor):
+    """Count the number of characters, words and lines in a text file."""
+    def __init__(self):
+        Extractor.__init__(self)
 
-    # set logging
-    logging.basicConfig(format='%(asctime)-15s %(levelname)-7s : %(name)s - %(message)s', level=logging.INFO)
-    logging.getLogger('pyclowder.extractors').setLevel(logging.DEBUG)
-    logger = logging.getLogger(extractorName)
-    logger.setLevel(logging.DEBUG)
+        image_binary = os.getenv('IMAGE_BINARY', '')
+        image_type = os.getenv('IMAGE_TYPE', 'png')
+        image_thumbnail_command = os.getenv('IMAGE_THUMBNAIL_COMMAND', '@BINARY@ @INPUT@ @OUTPUT@')
+        image_preview_command = os.getenv('IMAGE_PREVIEW_COMMAND', '@BINARY@ @INPUT@ @OUTPUT@')
+        preview_binary = os.getenv('PREVIEW_BINARY', '')
+        preview_type = os.getenv('PREVIEW_TYPE', '')
+        preview_command = os.getenv('PREVIEW_COMMAND', '@BINARY@ @INPUT@ @OUTPUT@')
 
-    # setup
-    extractors.setup(extractorName=extractorName,
-                       messageType=messageType,
-                       rabbitmqURL=rabbitmqURL,
-                       rabbitmqExchange=rabbitmqExchange)
+        # add any additional arguments to parser
+        self.parser.add_argument('--image-binary', nargs='?', dest='image_binary', default=image_binary,
+                                 help='Image Binary used to for image thumbnail/preview (default=%s)' % image_binary)
+        self.parser.add_argument('--image-type', nargs='?', dest='image_type', default=image_type,
+                                 help='Image type of thumbnail/preview (default=%s)' % image_type)
+        self.parser.add_argument('--image-thumbnail-command', nargs='?', dest='image_thumbnail_command',
+                                 default=image_thumbnail_command,
+                                 help='Image command line for thumbnail (default=%s)' % image_thumbnail_command)
+        self.parser.add_argument('--image-preview-command', nargs='?', dest='image_preview_command',
+                                 default=image_preview_command,
+                                 help='Image command line for preview (default=%s)' % image_preview_command)
+        self.parser.add_argument('--preview-binary', nargs='?', dest='preview_binary', default=preview_binary,
+                                 help='Binary used to generate preview (default=%s)' % preview_binary)
+        self.parser.add_argument('--preview-type', nargs='?', dest='preview_type', default=preview_type,
+                                 help='Preview type (default=%s)' % preview_type)
+        self.parser.add_argument('--preview-command', nargs='?', dest='preview_command', default=preview_command,
+                                 help='Command line for preview (default=%s)' % preview_command)
 
-    # register extractor info
-    extractors.register_extractor(registrationEndpoints)
+        # parse command line and load default logging configuration
+        self.setup()
 
-    # connect to rabbitmq
-    extractors.connect_message_bus(extractorName=extractorName,
-                                   messageType=messageType,
-                                   processFileFunction=process_file,
-                                   rabbitmqExchange=rabbitmqExchange,
-                                   rabbitmqURL=rabbitmqURL)
+        # setup logging for the exctractor
+        logging.getLogger('pyclowder').setLevel(logging.DEBUG)
+        logging.getLogger('__main__').setLevel(logging.DEBUG)
 
-# ----------------------------------------------------------------------
-# Process the file and upload the results
-def process_file(parameters):
-    global libreoffice, libreofficeCommand, convert, convertCommand
+    def process_message(self, connector, host, secret_key, resource, parameters):
+        # Process the file and upload the results
 
-    inputfile = parameters['inputfile']
-    pdffile   = re.sub(r"\..*$", ".pdf", inputfile)
-    pngfile   = re.sub(r"\..*$", ".png", inputfile)
+        inputfile = resource["local_paths"][0]
+        file_id = resource['id']
 
-    try:
-        execute_command(parameters, libreoffice, libreofficeCommand, inputfile, pdffile, False)
-        execute_command(parameters, convert, convertCommand, pdffile, pngfile, True)
-    finally:
+        pdffile = re.sub(r"\..*$", ".pdf", inputfile)
+        pngfile = re.sub(r"\..*$", ".png", inputfile)
+
+        # create extractor specifc preview
+        self.execute_command(connector, host, secret_key, inputfile, pdffile, file_id, resource, False,
+                             self.args.preview_binary, self.args.preview_command, self.args.preview_type)
+
+        # create thumbnail image
+        self.execute_command(connector, host, secret_key, inputfile, pngfile, file_id, resource, False,
+                             self.args.image_binary, self.args.image_thumbnail_command, self.args.image_type)
+
+        # create preview image
+        self.execute_command(connector, host, secret_key, inputfile, pngfile, file_id, resource, False,
+                             self.args.image_binary, self.args.image_preview_command, self.args.image_type)
+
         try:
-            if os.path.isfile(pngfile):
-                os.remove(pngfile)
-        except:
-            logger.error("could not remove png file : " + str(e.output))
+            os.remove(pdffile)
+            os.remove(pngfile)
+        except OSError:
             pass
+
+    @staticmethod
+    def execute_command(connector, host, key, inputfile, fileid, outputfile, resource, preview, binary, commandline, ext):
+        logger = logging.getLogger(__name__)
+
+        if binary is None or binary == '' or commandline is None or commandline == '' or ext is None or ext == '':
+            return
+
         try:
-            if os.path.isfile(pdffile):
-                os.remove(pdffile)
-        except:
-            logger.error("could not remove pdf file : " + str(e.output))
-            pass
+            # replace some special tokens
+            commandline = commandline.replace('@BINARY@', binary)
+            commandline = commandline.replace('@INPUT@', inputfile)
+            commandline = commandline.replace('@OUTPUT@', outputfile)
 
+            # split command line
+            p = re.compile(r'''((?:[^ "']|"[^"]*"|'[^']*')+)''')
+            commandline = p.split(commandline)[1::2]
 
-def execute_command(parameters, binary, commandline, inputfile, outputfile, thumbnail=False):
-    global logger
+            # execute command
+            x = subprocess.check_output(commandline, stderr=subprocess.STDOUT)
+            if x:
+                logger.debug(binary + " : " + x)
 
-    try:
-        # replace some special tokens
-        commandline = commandline.replace('@BINARY@', binary)
-        commandline = commandline.replace('@INPUT@', inputfile)
-        commandline = commandline.replace('@OUTPUT@', outputfile)
-        logger.debug(commandline)
-
-        # split command line
-        p = re.compile(r'''((?:[^ "']|"[^"]*"|'[^']*')+)''')
-        commandline = p.split(commandline)[1::2]
-
-        # execute command
-        x = subprocess.check_output(commandline, stderr=subprocess.STDOUT, cwd=os.path.dirname(inputfile))
-        if x:
-            logger.debug(binary + " : " + x)
-
-        if os.path.isfile(outputfile) and os.path.getsize(outputfile) != 0:
-            # upload result
-            if thumbnail:
-                extractors.upload_thumbnail(thumbnail=outputfile, parameters=parameters)
+            if os.path.getsize(outputfile) != 0:
+                # upload result
+                if preview:
+                    pyclowder.files.upload_preview(connector, host, key, fileid, outputfile, None)
+                    connector.status_update(pyclowder.utils.StatusMessage.processing, resource,
+                                            "Uploaded preview of type %s" % ext)
+                else:
+                    pyclowder.files.upload_thumbnail(connector, host, key, fileid, outputfile)
+                    connector.status_update(pyclowder.utils.StatusMessage.processing, resource,
+                                            "Uploaded thumbnail of type %s" % ext)
             else:
-                extractors.upload_preview(previewfile=outputfile, parameters=parameters)
-        else:
-            log.warn("Extraction resulted in 0 byte file, nothing uploaded.")
+                logger.warning("Extraction resulted in 0 byte file, nothing uploaded.")
 
-    except subprocess.CalledProcessError as e:
-        logger.error(binary + " : " + str(e.output))
-        raise
+        except subprocess.CalledProcessError as e:
+            logger.error(binary + " : " + str(e.output))
+            raise
+
 
 if __name__ == "__main__":
-    main()
+    extractor = OfficePreviewExtractor()
+    extractor.start()

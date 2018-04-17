@@ -1,27 +1,10 @@
-FROM clowder/pyclowder:1
-MAINTAINER Rob Kooper <kooper@illinois.edu>
+FROM clowder/extractors-binary-preview:onbuild
 
-# Setup environment variables. These are passed into the container. You can change
-# these to your setup. If RABBITMQ_URI is not set, it will try and use the rabbitmq
-# server that is linked into the container. MAIN_SCRIPT is set to the script to be
-# executed by entrypoint.sh
-ENV RABBITMQ_URI="" \
-    RABBITMQ_EXCHANGE="clowder" \
-    RABBITMQ_VHOST="%2F" \
-    RABBITMQ_QUEUE="ncsa.pdf.preview" \
-    REGISTRATION_ENDPOINTS="https://clowder.ncsa.illinois.edu/extractors" \
-    MAIN_SCRIPT="ncsa.pdf.preview.py"
-
-# Install any programs needed
-USER root
-RUN apt-get update && apt-get install -y \
-       imagemagick \
-    && rm -rf /var/lib/apt/lists/*   
-
-# Switch to clowder, copy files and be ready to run
-USER clowder
-
-# command to run when starting docker
-COPY entrypoint.sh *.py extractor_info.json /home/clowder/
-ENTRYPOINT ["/home/clowder/entrypoint.sh"]
-CMD ["extractor"]
+ENV RABBITMQ_QUEUE="ncsa.pdf.preview" \
+    IMAGE_BINARY="/usr/bin/convert" \
+    IMAGE_TYPE="png" \
+    IMAGE_THUMBNAIL_COMMAND="@BINARY@ @INPUT@[0] -density 300 -resize 225^ @OUTPUT@" \
+    IMAGE_PREVIEW_COMMAND="@BINARY@ @INPUT@[0] -density 300 -resize 800x600 @OUTPUT@" \
+    PREVIEW_BINARY="/bin/cp" \
+    PREVIEW_TYPE="pdf" \
+    PREVIEW_COMMAND="@BINARY@ @INPUT@ @OUTPUT@"
