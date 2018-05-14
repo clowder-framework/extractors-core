@@ -47,7 +47,7 @@ class FileDigestCalculator(Extractor):
             hashes[alg] = hashlib.new(alg)
 
         # Stream file and update hashes
-        for chunk in r.iter_content():
+        for chunk in r.iter_content(chunk_size=10240):
             for hash in hashes.values():
                 hash.update(chunk)
 
