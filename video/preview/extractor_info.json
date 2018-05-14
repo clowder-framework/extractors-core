@@ -3,7 +3,7 @@
     "name": "ncsa.video.preview",
     "version": "2.0.0",
     "description": "Creates thumbnail and image previews of Video files, as well as downscaled video preview",
-    "author": "Rob Kooper <koooper@illinois.edu>",
+    "author": "Rob Kooper <kooper@illinois.edu>",
     "contributors": [],
     "contexts": [],
     "repository": [
