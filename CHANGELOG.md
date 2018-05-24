@@ -15,3 +15,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Fixed bug in release shell script code.
 - Fixed maintainer name spelling
+- Use 10KB blocks when computing digest for faster computation.
