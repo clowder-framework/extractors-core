@@ -3,7 +3,7 @@
     "name": "ncsa.image.preview",
     "version": "2.0.0",
     "description": "Creates thumbnail and image previews of Image files.",
-    "author": "Rob Kooper <koooper@illinois.edu>",
+    "author": "Rob Kooper <kooper@illinois.edu>",
     "contributors": ["Sandeep Puthanveetil Satheesan <sandeeps@illinois.edu>"],
     "contexts": [],
     "repository": [
