@@ -6,10 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-## 0.4.0 - 2018-05-24
+## 2.0.0 - 2018-05-24
 
 ### Changed
 - All core extractors now use PyClowder2
+- Uses larger chunk size
 
 ### Fixed
 - Fixed bug in release shell script code.
+- Fixed maintainer name spelling
