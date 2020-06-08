@@ -8,3 +8,5 @@ ENV RABBITMQ_QUEUE="ncsa.pdf.preview" \
     PREVIEW_BINARY="/bin/cp" \
     PREVIEW_TYPE="pdf" \
     PREVIEW_COMMAND="@BINARY@ @INPUT@ @OUTPUT@"
+
+COPY policy.xml /etc/ImageMagick-6/policy.xml
