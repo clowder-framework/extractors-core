@@ -4,10 +4,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+
+# 2020-07-07
+
+## 1.0.1 - audio/speech2text
+
 ### Fixed
+
+- Updated dependencies for audio
+
+## 2.0.1 - pdf/preview 
+
+### Fixed
+
 - Fix pdf preview no authroization by updating policy.xml.
-## 2.0.0 - 2018-05-24
+
+# 2018-05-24
 
 ### Changed
 - All core extractors now use PyClowder2
