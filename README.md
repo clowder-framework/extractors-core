@@ -8,15 +8,8 @@ This repository will contain the core extractors that most people would like to 
 
 You can build the docker containers using the command: `./docker.sh`
 
-To test these extractors use teh docker-compose file in clowder.
+To test these extractors use the docker-compose file in clowder.
 
-
-RELEASE
-
-To create a release of the core extractors do the following (in this case the release is 2.0.0):
-- update the version number in all extractor_info.json files:
-  `find . -name extractor_info.json -exec sed -i~ 's/"version":.*/"version": "2.0.0",/' {} \;`.
-- update the version number in docker.sh
-- commit changes to develop, and create pull request to master
-- once pull request is merged
-- push all images to docker hub: `PUSH="yes" ./docker.sh`
+There is only a master branch, any changes made should be made to master. When making
+changes to the code, bump the version in the extractor_info.json as well as update the
+CHANGELOG.md
