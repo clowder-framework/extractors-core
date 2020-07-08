@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 
+# 2020-07-08
+
+## 2.1.0 - file/digest
+
+### Changed
+
+- redid building of container to use pyenv and install pyclowder
+
 # 2020-07-07
 
 ## 1.0.1 - audio/speech2text
