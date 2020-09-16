@@ -43,6 +43,8 @@ jobs:
             FOLDER: audio/preview
           - name: audio-speech2text
             FOLDER: audio/speech2text
+          - name: digest
+            FOLDER: digest
           - name: image-metadata
             FOLDER: image/metadata
           - name: image-preview
