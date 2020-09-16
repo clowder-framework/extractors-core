@@ -31,7 +31,7 @@ jobs:
       matrix:
         name:
           - audio-preview
-          #- audio-speech2text
+#          - audio-speech2text
           - digest
           - image-metadata
           - image-preview
@@ -41,8 +41,8 @@ jobs:
         include:
           - name: audio-preview
             FOLDER: audio/preview
-          - name: audio-speech2text
-            FOLDER: audio/speech2text
+#          - name: audio-speech2text
+#            FOLDER: audio/speech2text
           - name: digest
             FOLDER: digest
           - name: image-metadata
