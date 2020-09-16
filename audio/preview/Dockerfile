@@ -1,4 +1,4 @@
-FROM clowder/extractors-binary-preview:onbuild
+FROM python:3.7-alpine
 
 ENV RABBITMQ_QUEUE="ncsa.audio.preview" \
     IMAGE_BINARY="/usr/bin/sox" \
@@ -8,3 +8,10 @@ ENV RABBITMQ_QUEUE="ncsa.audio.preview" \
     PREVIEW_BINARY="/usr/bin/sox" \
     PREVIEW_TYPE="mp3" \
     PREVIEW_COMMAND="@BINARY@ --magic @INPUT@ @OUTPUT@"
+
+WORKDIR /extractor
+
+RUN apk add --no-cache sox
+
+COPY requirements.txt ./
+RUN pip install -r requirements.txt
