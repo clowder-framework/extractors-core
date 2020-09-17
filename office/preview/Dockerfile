@@ -1,6 +1,13 @@
-FROM clowder/pyclowder:onbuild
+FROM python:3.7-alpine
 
-ENV MAIN_SCRIPT="ncsa.office.preview.py" \
+ARG VERSION="unknown"
+ARG BUILDNUMBER="unknown"
+ARG GITSHA1="unknown"
+
+# environemnt variables
+ENV VERSION=${VERSION} \
+    BUILDNUMBER=${BUILDNUMBER} \
+    GITSHA1=${GITSHA1} \
     RABBITMQ_QUEUE="ncsa.office.preview" \
     IMAGE_BINARY="/usr/bin/convert" \
     IMAGE_TYPE="png" \
@@ -9,3 +16,13 @@ ENV MAIN_SCRIPT="ncsa.office.preview.py" \
     PREVIEW_BINARY="/usr/bin/libreoffice" \
     PREVIEW_TYPE="pdf" \
     PREVIEW_COMMAND="@BINARY@ --headless --convert-to pdf @INPUT@"
+
+WORKDIR /extractor
+
+RUN apk add --no-cache imagemagick libreoffice
+
+COPY requirements.txt ./
+RUN pip install -r requirements.txt
+
+COPY ncsa.office.preview.py extractor_info.json ./
+CMD python ncsa.office.preview.py

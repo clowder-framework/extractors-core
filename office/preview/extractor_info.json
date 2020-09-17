@@ -1,7 +1,7 @@
 {
     "@context": "http://clowder.ncsa.illinois.edu/contexts/extractors.jsonld",
     "name": "ncsa.office.preview",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "description": "Creates previews of Office files, both thumbnail as well as a PDF preview.",
     "author": "Rob Kooper <kooper@illinois.edu>",
     "contributors": [],
@@ -9,7 +9,7 @@
     "repository": [
         {
             "repType": "git",
-            "repUrl": "https://opensource.ncsa.illinois.edu/bitbucket/scm/cats/extractors-core.git"
+            "repUrl": "https://github.com/clowder-framework/extractors-core.git"
         },
         {
             "repType": "docker",

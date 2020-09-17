@@ -58,6 +58,20 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      # calculate some variables that are used later
+      - name: github branch
+        run: |
+          version="$(awk '/"version":/ { print $2 }' ${FOLDER}/extractor_info.json | sed 's/^.*"\([0-9\.]*\)".*$/\1/')"
+          echo "::set-env name=VERSION::${version}"
+          tags="latest"
+          oldversion=""
+          while [ "${oldversion}" != "${version}" ]; do
+            oldversion="${version}"
+            tags="${tags},${version}"
+            version=${version%.*}
+          done
+          echo "::set-env name=TAGS::${tags}"
+
       # build the docker image, this will always run to make sure
       # the Dockerfile still works.
       - name: Build image
@@ -69,8 +83,7 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: elgohr/Publish-Docker-Github-Action@2.18
         env:
-          BRANCH: ${{ github.ref }}
-          VERSION: ${{ github.run_number }}
+          VERSION: ${{ env.VERSION }}
           BUILDNUMBER: ${{ github.run_number }}
           GITSHA1: ${{ github.sha  }}
         with:
@@ -78,18 +91,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           context: ${{ matrix.FOLDER }}
-          tag_semver: true
-          tag_names: true
+          tags: "${{ env.TAGS }}"
           registry: docker.pkg.github.com
-          buildargs: BRANCH,VERSION,BUILDNUMBER,GITSHA1
+          buildargs: VERSION,BUILDNUMBER,GITSHA1
 
       # this will publish to the clowder dockerhub repo
       - name: Publish to Docker Hub
         if: github.event_name != 'pull_request' && github.repository == env.MASTER_REPO
         uses: elgohr/Publish-Docker-Github-Action@2.18
         env:
-          BRANCH: ${{ github.ref }}
-          VERSION: ${{ github.run_number }}
+          VERSION: ${{ env.VERSION }}
           BUILDNUMBER: ${{ github.run_number }}
           GITSHA1: ${{ github.sha  }}
         with:
@@ -97,9 +108,8 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
           context: ${{ matrix.FOLDER }}
-          tag_semver: true
-          tag_names: true
-          buildargs: BRANCH,VERSION,BUILDNUMBER,GITSHA1
+          tags: "${{ env.TAGS }}"
+          buildargs: VERSION,BUILDNUMBER,GITSHA1
 
       # this will update the README of the dockerhub repo
       - name: check file

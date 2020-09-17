@@ -1,6 +1,14 @@
 FROM python:3.7-alpine
 
-ENV RABBITMQ_QUEUE="ncsa.image.metadata" \
+ARG VERSION="unknown"
+ARG BUILDNUMBER="unknown"
+ARG GITSHA1="unknown"
+
+# environemnt variables
+ENV VERSION=${VERSION} \
+    BUILDNUMBER=${BUILDNUMBER} \
+    GITSHA1=${GITSHA1} \
+    RABBITMQ_QUEUE="ncsa.image.metadata" \
     IMAGE_BINARY="/usr/bin/identify"
 
 WORKDIR /extractor

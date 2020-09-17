@@ -1,6 +1,14 @@
-FROM clowder/extractors-binary-preview:onbuild
+FROM python:3.7-alpine
 
-ENV RABBITMQ_QUEUE="ncsa.pdf.preview" \
+ARG VERSION="unknown"
+ARG BUILDNUMBER="unknown"
+ARG GITSHA1="unknown"
+
+# environemnt variables
+ENV VERSION=${VERSION} \
+    BUILDNUMBER=${BUILDNUMBER} \
+    GITSHA1=${GITSHA1} \
+    RABBITMQ_QUEUE="ncsa.pdf.preview" \
     IMAGE_BINARY="/usr/bin/convert" \
     IMAGE_TYPE="png" \
     IMAGE_THUMBNAIL_COMMAND="@BINARY@ @INPUT@[0] -density 300 -resize 225^ @OUTPUT@" \
@@ -9,4 +17,12 @@ ENV RABBITMQ_QUEUE="ncsa.pdf.preview" \
     PREVIEW_TYPE="pdf" \
     PREVIEW_COMMAND="@BINARY@ @INPUT@ @OUTPUT@"
 
-COPY policy.xml /etc/ImageMagick-6/policy.xml
+WORKDIR /extractor
+
+RUN apk add --no-cache imagemagick ghostscript
+
+COPY requirements.txt ./
+RUN pip install -r requirements.txt
+
+COPY binary_extractor.py extractor_info.json ./
+CMD python binary_extractor.py
