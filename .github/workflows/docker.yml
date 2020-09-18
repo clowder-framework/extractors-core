@@ -87,7 +87,7 @@ jobs:
           BUILDNUMBER: ${{ github.run_number }}
           GITSHA1: ${{ github.sha  }}
         with:
-          name: ${{ github.repository_owner }}/clowder/extractors-${{ matrix.NAME }}
+          name: ${{ github.repository_owner }}/${{ github.event.repository.name }}/extractors-${{ matrix.NAME }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           context: ${{ matrix.FOLDER }}
