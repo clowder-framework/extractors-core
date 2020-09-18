@@ -9,7 +9,7 @@ ENV VERSION=${VERSION} \
     BUILDNUMBER=${BUILDNUMBER} \
     GITSHA1=${GITSHA1} \
     RABBITMQ_QUEUE="ncsa.video.preview" \
-    IMAGE_BINARY="/usr/bin/avconv" \
+    IMAGE_BINARY="/usr/bin/ffmpeg" \
     IMAGE_TYPE="png" \
     IMAGE_THUMBNAIL_COMMAND="@BINARY@ -y -i @INPUT@ -ss 1 -t 1 -r 1 -vcodec png -f rawvideo -vf scale=225:-1 @OUTPUT@" \
     IMAGE_PREVIEW_COMMAND="@BINARY@ -y -i @INPUT@ -ss 1 -t 1 -r 1 -vcodec png -f rawvideo @OUTPUT@" \
