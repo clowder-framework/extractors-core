@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 # 2020-09-16
 
-Updated extractors to use pyclowder 2.3.0
+Updated extractors to use pyclowder 2.3.1
 
 # 2020-07-07
 
