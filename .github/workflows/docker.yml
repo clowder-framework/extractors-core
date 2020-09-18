@@ -61,7 +61,7 @@ jobs:
       # calculate some variables that are used later
       - name: github branch
         run: |
-          version="$(awk '/"version":/ { print $2 }' ${FOLDER}/extractor_info.json | sed 's/^.*"\([0-9\.]*\)".*$/\1/')"
+          version="$(awk '/"version":/ { print $2 }' ${{ matrix.FOLDER }}/extractor_info.json | sed 's/^.*"\([0-9\.]*\)".*$/\1/')"
           echo "::set-env name=VERSION::${version}"
           tags="latest"
           oldversion=""
@@ -76,7 +76,7 @@ jobs:
       # the Dockerfile still works.
       - name: Build image
         run: |
-          docker build --tag image ${{ matrix.FOLDER }}
+          docker build --tag ${{ matrix.NAME }} ${{ matrix.FOLDER }}
 
       # this will publish to the actor (person) github packages
       - name: Publish to GitHub
