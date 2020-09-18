@@ -35,7 +35,7 @@ class ImageMetadataExtractor(Extractor):
         file_id = resource['id']
 
         result = self.parse_exif(subprocess.check_output(
-            [self.args.image_binary, "-verbose", inputfile], stderr=subprocess.STDOUT))
+            [self.args.image_binary, "-verbose", inputfile], stderr=subprocess.STDOUT).decode("utf-8"))
 
         metadata = {
             "@context": {
