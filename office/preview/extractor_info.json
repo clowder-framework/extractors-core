@@ -1,7 +1,7 @@
 {
     "@context": "http://clowder.ncsa.illinois.edu/contexts/extractors.jsonld",
     "name": "ncsa.office.preview",
-    "version": "2.1.0",
+    "version": "2.1.1",
     "description": "Creates previews of Office files, both thumbnail as well as a PDF preview.",
     "author": "Rob Kooper <kooper@illinois.edu>",
     "contributors": [],
