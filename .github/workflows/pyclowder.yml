@@ -32,7 +32,7 @@ jobs:
               echo "Updating pyclowder for ${folder} to ${pyclowder}"
 
               # update pyclowder
-              sed -i~ "s/^pyclowder==.*/pyclowder==$pyclowder/" ${folder}/requirements.txt
+              sed -i~ "s/^pyclowder *==.*/pyclowder==$pyclowder/" ${folder}/requirements.txt
 
               # get extractor version
               extractor=$(jq -r .version ${folder}/extractor_info.json)
