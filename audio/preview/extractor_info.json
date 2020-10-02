@@ -1,27 +1,31 @@
 {
-    "@context": "http://clowder.ncsa.illinois.edu/contexts/extractors.jsonld",
-    "name": "ncsa.audio.preview",
-    "version": "2.1.1",
-    "description": "Creates thumbnail and image previews of Audio files.",
-    "author": "Rob Kooper <kooper@illinois.edu>",
-    "contributors": [],
-    "contexts": [],
-    "repository": [
-      {
-        "repType": "git",
-            "repUrl": "https://github.com/clowder-framework/extractors-core.git"
-      },
-      {
-        "repType": "docker",
-        "repUrl": "clowder/extractors-audio-preview"
-      }
-    ],
-    "external_services": [],
-    "process": {
-      "file": [
-        "audio/*"
-      ]
+  "@context": "http://clowder.ncsa.illinois.edu/contexts/extractors.jsonld",
+  "name": "ncsa.audio.preview",
+  "version": "2.1.2",
+  "description": "Creates thumbnail and image previews of Audio files.",
+  "author": "Rob Kooper <kooper@illinois.edu>",
+  "contributors": [],
+  "contexts": [],
+  "repository": [
+    {
+      "repType": "git",
+      "repUrl": "https://github.com/clowder-framework/extractors-core.git"
     },
-    "dependencies": ["sox"],
-    "bibtex": [""]
+    {
+      "repType": "docker",
+      "repUrl": "clowder/extractors-audio-preview"
+    }
+  ],
+  "external_services": [],
+  "process": {
+    "file": [
+      "audio/*"
+    ]
+  },
+  "dependencies": [
+    "sox"
+  ],
+  "bibtex": [
+    ""
+  ]
 }

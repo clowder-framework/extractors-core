@@ -1,27 +1,34 @@
 {
-    "@context": "http://clowder.ncsa.illinois.edu/contexts/extractors.jsonld",
-    "name": "ncsa.image.metadata",
-    "version": "2.1.1",
-    "description": "Extracts metadata from Image files.",
-    "author": "Max Burnette <mburnet2@illinois.edu>",
-    "contributors": ["Rob Kooper <kooper@illinois.edu>"],
-    "contexts": [],
-    "repository": [
-        {
-            "repType": "git",
-            "repUrl": "https://github.com/clowder-framework/extractors-core.git"
-        },
-        {
-            "repType": "docker",
-            "repUrl": "clowder/extractors-image-metadata"
-        }
-    ],
-    "external_services": [],
-    "dependencies": ["imagemagick", "ufraw-batch"],
-    "process": {
-      "file": [
-        "image/*"
-      ]
+  "@context": "http://clowder.ncsa.illinois.edu/contexts/extractors.jsonld",
+  "name": "ncsa.image.metadata",
+  "version": "2.1.2",
+  "description": "Extracts metadata from Image files.",
+  "author": "Max Burnette <mburnet2@illinois.edu>",
+  "contributors": [
+    "Rob Kooper <kooper@illinois.edu>"
+  ],
+  "contexts": [],
+  "repository": [
+    {
+      "repType": "git",
+      "repUrl": "https://github.com/clowder-framework/extractors-core.git"
     },
-    "bibtex": [""]
+    {
+      "repType": "docker",
+      "repUrl": "clowder/extractors-image-metadata"
+    }
+  ],
+  "external_services": [],
+  "dependencies": [
+    "imagemagick",
+    "ufraw-batch"
+  ],
+  "process": {
+    "file": [
+      "image/*"
+    ]
+  },
+  "bibtex": [
+    ""
+  ]
 }
