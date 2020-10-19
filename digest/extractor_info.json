@@ -1,7 +1,7 @@
 {
   "@context": "http://clowder.ncsa.illinois.edu/contexts/extractors.jsonld",
   "name": "ncsa.file.digest",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "File digest extractor",
   "author": "Max Burnette <mburnet2@illinois.edu>",
   "contributors": [],
@@ -23,5 +23,8 @@
   },
   "external_services": [],
   "dependencies": [],
-  "bibtex": []
+  "bibtex": [],
+  "labels": [
+    "Type/Any"
+  ]
 }
