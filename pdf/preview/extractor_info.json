@@ -1,7 +1,7 @@
 {
   "@context": "http://clowder.ncsa.illinois.edu/contexts/extractors.jsonld",
   "name": "ncsa.pdf.preview",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "Creates thumbnail previews of PDF files, as well as a copy for PDF preview.",
   "author": "Rob Kooper <kooper@illinois.edu>",
   "contributors": [],
@@ -27,5 +27,8 @@
   ],
   "bibtex": [
     ""
+  ],
+  "labels": [
+    "Type/PDF"
   ]
 }
