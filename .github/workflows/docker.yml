@@ -63,13 +63,14 @@ jobs:
         run: |
           version="$(awk '/"version":/ { print $2 }' ${{ matrix.FOLDER }}/extractor_info.json | sed 's/^.*"\([0-9\.]*\)".*$/\1/')"
           echo "VERSION=${version}" >> $GITHUB_ENV
-          tags="latest"
+          tags=""
           oldversion=""
           while [ "${oldversion}" != "${version}" ]; do
             oldversion="${version}"
-            tags="${tags},${version}"
+            tags="${version},${tags}"
             version=${version%.*}
           done
+          tags="latest,${tags}"
           echo "TAGS=${tags}" >> $GITHUB_ENV
 
       # build the docker image, this will always run to make sure
