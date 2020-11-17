@@ -82,7 +82,7 @@ jobs:
           GITSHA1: ${{ github.sha  }}
         with:
           registry: docker.pkg.github.com
-          name: ${{ github.repository_owner }}/${{ github.event.repository.name }}/extractors-${{ matrix.IMAGE }}
+          name: ${{ github.repository_owner }}/${{ github.event.repository.name }}/extractors-${{ matrix.NAME }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           context: ${{ matrix.FOLDER }}
