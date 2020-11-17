@@ -100,7 +100,7 @@ jobs:
           GITSHA1: ${{ github.sha  }}
         with:
           registry: ghcr.io
-          name: ${{ github.repository_owner }}/extractors-${{ matrix.IMAGE }}
+          name: ${{ github.repository_owner }}/extractors-${{ matrix.NAME }}
           username: ${{ secrets.GHCR_USERNAME }}
           password: ${{ secrets.GHCR_PASSWORD }}
           context: ${{ matrix.FOLDER }}
