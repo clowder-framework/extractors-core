@@ -11,8 +11,8 @@ ENV VERSION=${VERSION} \
     RABBITMQ_QUEUE="ncsa.image.preview" \
     IMAGE_BINARY="/usr/bin/convert" \
     IMAGE_TYPE="png" \
-    IMAGE_THUMBNAIL_COMMAND="@BINARY@ @INPUT@[0] -resize 225^ @OUTPUT@" \
-    IMAGE_PREVIEW_COMMAND="@BINARY@ @INPUT@[0] -resize 800x600 @OUTPUT@"
+    IMAGE_THUMBNAIL_COMMAND="@BINARY@ @INPUT@[0] -auto-orient -resize 225^ @OUTPUT@" \
+    IMAGE_PREVIEW_COMMAND="@BINARY@ @INPUT@[0] -auto-orient -resize 800x600 @OUTPUT@"
 
 WORKDIR /extractor
 
