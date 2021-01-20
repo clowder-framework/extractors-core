@@ -1,4 +1,4 @@
-FROM python:3.7-alpine
+FROM python:3.7
 
 ARG VERSION="unknown"
 ARG BUILDNUMBER="unknown"
@@ -12,14 +12,19 @@ ENV VERSION=${VERSION} \
     IMAGE_BINARY="/usr/bin/convert" \
     IMAGE_TYPE="png" \
     IMAGE_THUMBNAIL_COMMAND="@BINARY@ @INPUT@[0] -auto-orient -resize 225^ @OUTPUT@" \
-    IMAGE_PREVIEW_COMMAND="@BINARY@ @INPUT@[0] -auto-orient -resize 800x600 @OUTPUT@"
+    IMAGE_PREVIEW_COMMAND="@BINARY@ @INPUT@[0] -auto-orient -resize 800x600 @OUTPUT@" \
+    MAGICK_CONFIGURE_PATH='/extractor'
 
 WORKDIR /extractor
 
-RUN apk add --no-cache imagemagick
+RUN apt update && apt-get install build-essential && \
+    wget https://www.imagemagick.org/download/ImageMagick.tar.gz && \
+    tar xvzf ImageMagick.tar.gz && \
+    cd ImageMagick-7.0.10-58/ && \
+    ./configure && make && make install && ldconfig /usr/local/lib
 
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
-COPY binary_extractor.py extractor_info.json ./
+COPY binary_extractor.py extractor_info.json policy.xml ./
 CMD python binary_extractor.py
