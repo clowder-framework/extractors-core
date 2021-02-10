@@ -17,11 +17,7 @@ ENV VERSION=${VERSION} \
 
 WORKDIR /extractor
 
-RUN apt update && apt-get install build-essential && \
-    wget https://www.imagemagick.org/download/ImageMagick.tar.gz && \
-    tar xvzf ImageMagick.tar.gz && \
-    cd ImageMagick-7.0.10-58/ && \
-    ./configure && make && make install && ldconfig /usr/local/lib
+RUN apt update && apt-get install -y build-essential imagemagick
 
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
