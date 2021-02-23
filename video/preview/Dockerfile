@@ -1,4 +1,4 @@
-FROM python:3.7-alpine
+FROM python:3.7
 
 ARG VERSION="unknown"
 ARG BUILDNUMBER="unknown"
@@ -20,7 +20,10 @@ ENV VERSION=${VERSION} \
 
 WORKDIR /extractor
 
-RUN apk add --no-cache ffmpeg
+#RUN apk add --no-cache ffmpeg py3-curl
+RUN apt-get update && \
+    apt-get -y install ffmpeg && \
+    rm -rf rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt ./
 RUN pip install -r requirements.txt

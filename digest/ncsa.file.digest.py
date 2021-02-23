@@ -70,9 +70,9 @@ class FileDigestCalculator(Extractor):
         # stream data and compute hash
         logger.debug("sending request for digest streaming: "+url)
         if os.getenv('STREAM', '').lower() == 'pycurl':
-            self.stream_pycurl(url, connector, hashes)
+            self.stream_pycurl(connector, url, hashes)
         else:
-            self.stream_requests(url, connector, hashes)
+            self.stream_requests(connector, url, hashes)
 
         # Generate final hex hash
         hash_digest = {}
