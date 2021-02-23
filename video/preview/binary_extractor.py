@@ -49,6 +49,24 @@ class BinaryPreviewExtractor(Extractor):
         logging.getLogger('pyclowder').setLevel(logging.DEBUG)
         logging.getLogger('__main__').setLevel(logging.DEBUG)
 
+    def check_message(self, connector, host, secret_key, resource, parameters):
+        if os.getenv('STREAM', '').lower() == 'pycurl':
+            return CheckMessage.bypass
+        else:
+            return CheckMessage.download
+
+    def download_file(self):
+        url = '%sapi/files/%s/blob?key=%s' % (host, resource['id'], secret_key)
+        inputfile = resource["local_paths"][0]
+        file_id = resource['id']
+
+        with open('out.html', 'wb') as f:
+            c = pycurl.Curl()
+            c.setopt(c.URL, 'http://pycurl.io/')
+            c.setopt(c.WRITEDATA, f)
+            c.perform()
+            c.close()
+
     def process_message(self, connector, host, secret_key, resource, parameters):
         # Process the file and upload the results
 

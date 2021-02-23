@@ -36,21 +36,22 @@ class FileDigestCalculator(Extractor):
     def check_message(self, connector, host, secret_key, resource, parameters):
         return CheckMessage.bypass
 
-    def stream_requests(self, url, hashes):
+    def stream_requests(self, connector, url, hashes):
         # Stream file and update hashes
-        r = requests.get(url, stream=True)
+        r = requests.get(url, stream=True, verify=connector.ssl_verify if connector else True)
         for chunk in r.iter_content(chunk_size=10240):
             for hash in hashes.values():
                 hash.update(chunk)
 
-    def stream_pycurl(self, url, hashes):
+    def stream_pycurl(self, connector, url, hashes):
         def hash_data(data):
             for hash in hashes.values():
                 hash.update(data)
 
         c = pycurl.Curl()
-        c.setopt(pycurl.SSL_VERIFYPEER, 0)
-        c.setopt(pycurl.SSL_VERIFYHOST, 0)
+        if connector and not connector.ssl_verify:
+            c.setopt(pycurl.SSL_VERIFYPEER, 0)
+            c.setopt(pycurl.SSL_VERIFYHOST, 0)
         c.setopt(c.URL, url)
         c.setopt(c.WRITEFUNCTION, hash_data)
         c.setopt(c.CAINFO, certifi.where())
@@ -69,9 +70,9 @@ class FileDigestCalculator(Extractor):
         # stream data and compute hash
         logger.debug("sending request for digest streaming: "+url)
         if os.getenv('STREAM', '').lower() == 'pycurl':
-            self.stream_pycurl(url, hashes)
+            self.stream_pycurl(url, connector, hashes)
         else:
-            self.stream_requests(url, hashes)
+            self.stream_requests(url, connector, hashes)
 
         # Generate final hex hash
         hash_digest = {}
