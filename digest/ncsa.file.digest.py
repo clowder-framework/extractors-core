@@ -6,6 +6,7 @@ import os
 import requests
 import pycurl
 import certifi
+import json
 
 from pyclowder.extractors import Extractor
 from pyclowder.utils import CheckMessage
@@ -49,7 +50,7 @@ class FileDigestCalculator(Extractor):
                 hash.update(data)
 
         c = pycurl.Curl()
-        if connector and not connector.ssl_verify:
+        if (connector and not connector.ssl_verify) or (os.getenv("SSL_IGNORE", "").lower() == "true"):
             c.setopt(pycurl.SSL_VERIFYPEER, 0)
             c.setopt(pycurl.SSL_VERIFYHOST, 0)
         c.setopt(c.URL, url)

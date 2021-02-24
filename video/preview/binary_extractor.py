@@ -10,6 +10,7 @@ import pycurl
 import certifi
 
 from pyclowder.extractors import Extractor
+from pyclowder.utils import CheckMessage
 import pyclowder.files
 import pyclowder.utils
 
@@ -68,7 +69,7 @@ class BinaryPreviewExtractor(Extractor):
             try:
                 with os.fdopen(inputfile, "wb") as outputfile:
                     c = pycurl.Curl()
-                    if connector and not connector.ssl_verify:
+                    if (connector and not connector.ssl_verify) or (os.getenv("SSL_IGNORE", "").lower() == "true"):
                         c.setopt(pycurl.SSL_VERIFYPEER, 0)
                         c.setopt(pycurl.SSL_VERIFYHOST, 0)
                     c.setopt(c.URL, url)
