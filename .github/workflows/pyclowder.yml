@@ -42,7 +42,7 @@ jobs:
               echo "Extractor for ${folder} is now ${newextractor}, was ${extractor}"
 
               # update extractor_info.json
-              jq ".version=\"${newextractor}\"" ${folder}/extractor_info.json > tmpfile
+              jq ".version=\"${newextractor}\" | .changelog.\"${newextractor}\"=[\"upgrade pyclowder to $pyclowder\"]" ${folder}/extractor_info.json > tmpfile
               mv tmpfile ${folder}/extractor_info.json
             fi
           done
