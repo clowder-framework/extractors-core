@@ -1,4 +1,4 @@
-FROM python:3.7-alpine
+FROM python:3.7
 
 ARG VERSION="unknown"
 ARG BUILDNUMBER="unknown"
@@ -9,6 +9,7 @@ ENV VERSION=${VERSION} \
     BUILDNUMBER=${BUILDNUMBER} \
     GITSHA1=${GITSHA1} \
     RABBITMQ_QUEUE="ncsa.video.preview" \
+    STREAM=requests \
     IMAGE_BINARY="/usr/bin/ffmpeg" \
     IMAGE_TYPE="png" \
     IMAGE_THUMBNAIL_COMMAND="@BINARY@ -y -i @INPUT@ -ss 1 -t 1 -r 1 -vcodec png -f rawvideo -vf scale=225:-1 @OUTPUT@" \
@@ -19,7 +20,10 @@ ENV VERSION=${VERSION} \
 
 WORKDIR /extractor
 
-RUN apk add --no-cache ffmpeg
+#RUN apk add --no-cache ffmpeg py3-curl
+RUN apt-get update && \
+    apt-get -y install ffmpeg && \
+    rm -rf rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt ./
 RUN pip install -r requirements.txt

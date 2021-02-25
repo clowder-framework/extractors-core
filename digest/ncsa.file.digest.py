@@ -4,6 +4,9 @@ import hashlib
 import logging
 import os
 import requests
+import pycurl
+import certifi
+import json
 
 from pyclowder.extractors import Extractor
 from pyclowder.utils import CheckMessage
@@ -34,22 +37,43 @@ class FileDigestCalculator(Extractor):
     def check_message(self, connector, host, secret_key, resource, parameters):
         return CheckMessage.bypass
 
+    def stream_requests(self, connector, url, hashes):
+        # Stream file and update hashes
+        r = requests.get(url, stream=True, verify=connector.ssl_verify if connector else True)
+        for chunk in r.iter_content(chunk_size=10240):
+            for hash in hashes.values():
+                hash.update(chunk)
+
+    def stream_pycurl(self, connector, url, hashes):
+        def hash_data(data):
+            for hash in hashes.values():
+                hash.update(data)
+
+        c = pycurl.Curl()
+        if (connector and not connector.ssl_verify) or (os.getenv("SSL_IGNORE", "").lower() == "true"):
+            c.setopt(pycurl.SSL_VERIFYPEER, 0)
+            c.setopt(pycurl.SSL_VERIFYHOST, 0)
+        c.setopt(c.URL, url)
+        c.setopt(c.WRITEFUNCTION, hash_data)
+        c.setopt(c.CAINFO, certifi.where())
+        c.perform()
+        c.close()
+
     def process_message(self, connector, host, secret_key, resource, parameters):
         logger = logging.getLogger('__main__')
         url = '%sapi/files/%s/blob?key=%s' % (host, resource['id'], secret_key)
-
-        logger.debug("sending request for digest streaming: "+url)
-        r = requests.get(url, stream=True)
 
         # Prepare hash objects
         hashes = {}
         for alg in self.hash_list:
             hashes[alg] = hashlib.new(alg)
 
-        # Stream file and update hashes
-        for chunk in r.iter_content(chunk_size=10240):
-            for hash in hashes.values():
-                hash.update(chunk)
+        # stream data and compute hash
+        logger.debug("sending request for digest streaming: "+url)
+        if os.getenv('STREAM', '').lower() == 'pycurl':
+            self.stream_pycurl(connector, url, hashes)
+        else:
+            self.stream_requests(connector, url, hashes)
 
         # Generate final hex hash
         hash_digest = {}

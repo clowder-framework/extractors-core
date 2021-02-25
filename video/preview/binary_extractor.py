@@ -6,7 +6,11 @@ import re
 import subprocess
 import tempfile
 
+import pycurl
+import certifi
+
 from pyclowder.extractors import Extractor
+from pyclowder.utils import CheckMessage
 import pyclowder.files
 import pyclowder.utils
 
@@ -49,35 +53,66 @@ class BinaryPreviewExtractor(Extractor):
         logging.getLogger('pyclowder').setLevel(logging.DEBUG)
         logging.getLogger('__main__').setLevel(logging.DEBUG)
 
+    def check_message(self, connector, host, secret_key, resource, parameters):
+        if os.getenv('STREAM', '').lower() == 'pycurl':
+            return CheckMessage.bypass
+        else:
+            return CheckMessage.download
+
     def process_message(self, connector, host, secret_key, resource, parameters):
         # Process the file and upload the results
 
-        inputfile = resource["local_paths"][0]
+        if os.getenv('STREAM', '').lower() == 'pycurl':
+            url = '%sapi/files/%s/blob?key=%s' % (host, resource['id'], secret_key)
+            (inputfile, inputfilename) = tempfile.mkstemp(suffix="")
+
+            try:
+                with os.fdopen(inputfile, "wb") as outputfile:
+                    c = pycurl.Curl()
+                    if (connector and not connector.ssl_verify) or (os.getenv("SSL_IGNORE", "").lower() == "true"):
+                        c.setopt(pycurl.SSL_VERIFYPEER, 0)
+                        c.setopt(pycurl.SSL_VERIFYHOST, 0)
+                    c.setopt(c.URL, url)
+                    c.setopt(c.WRITEDATA, outputfile)
+                    c.setopt(c.CAINFO, certifi.where())
+                    c.perform()
+                    c.close()
+            except Exception:
+                os.remove(inputfilename)
+                raise
+        else:
+            inputfilename = resource["local_paths"][0]
+
         file_id = resource['id']
 
-        # create thumbnail image
-        if 'image_thumbnail' in parameters:
-            args = parameters['image_thumbnail']
-        else:
-            args = self.args.image_thumbnail_command
-        self.execute_command(connector, host, secret_key, inputfile, file_id, resource, False,
-                             self.args.image_binary, args, self.args.image_type)
+        try:
+            # create thumbnail image
+            if 'image_thumbnail' in parameters:
+                args = parameters['image_thumbnail']
+            else:
+                args = self.args.image_thumbnail_command
+            self.execute_command(connector, host, secret_key, inputfilename, file_id, resource, False,
+                                 self.args.image_binary, args, self.args.image_type)
 
-        # create preview image
-        if 'image_preview' in parameters:
-            args = parameters['image_preview']
-        else:
-            args = self.args.image_preview_command
-        self.execute_command(connector, host, secret_key, inputfile, file_id, resource, True,
-                             self.args.image_binary, args, self.args.image_type)
+            # create preview image
+            if 'image_preview' in parameters:
+                args = parameters['image_preview']
+            else:
+                args = self.args.image_preview_command
+            self.execute_command(connector, host, secret_key, inputfilename, file_id, resource, True,
+                                 self.args.image_binary, args, self.args.image_type)
 
-        # create extractor specifc preview
-        if 'preview' in parameters:
-            args = parameters['preview']
-        else:
-            args = self.args.preview_command
-        self.execute_command(connector, host, secret_key, inputfile, file_id, resource, True,
-                             self.args.preview_binary, args, self.args.preview_type)
+            # create extractor specifc preview
+            if 'preview' in parameters:
+                args = parameters['preview']
+            else:
+                args = self.args.preview_command
+            self.execute_command(connector, host, secret_key, inputfilename, file_id, resource, True,
+                                 self.args.preview_binary, args, self.args.preview_type)
+
+        finally:
+            if os.getenv('STREAM', '').lower() == 'pycurl':
+                os.remove(inputfilename)
 
     @staticmethod
     def execute_command(connector, host, key, inputfile, fileid, resource, preview, binary, commandline, ext):

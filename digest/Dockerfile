@@ -1,4 +1,4 @@
-FROM python:3.7-alpine
+FROM python:3.7
 
 ARG VERSION="unknown"
 ARG BUILDNUMBER="unknown"
@@ -8,6 +8,7 @@ ARG GITSHA1="unknown"
 ENV VERSION=${VERSION} \
     BUILDNUMBER=${BUILDNUMBER} \
     GITSHA1=${GITSHA1} \
+    STREAM=requests \
     RABBITMQ_QUEUE="ncsa.file.digest" \
     EXTRACTOR_HASHLIST="md5","sha1","sha224","sha256","sha384","sha512"
 
