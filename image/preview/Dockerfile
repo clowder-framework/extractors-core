@@ -25,5 +25,5 @@ RUN apt update && apt-get install -y build-essential imagemagick \
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
-COPY binary_extractor.py extractor_info.json policy.xml ./
+COPY binary_extractor.py extractor_info.json ./
 CMD python binary_extractor.py
