@@ -17,7 +17,10 @@ ENV VERSION=${VERSION} \
 
 WORKDIR /extractor
 
-RUN apt update && apt-get install -y build-essential imagemagick
+RUN apt update && apt-get install -y build-essential imagemagick \
+    && sed -i -e 's#name="memory" value=".*#name="memory" value="2Gib"/>#' \
+              -e 's#name="disk" value=".*#name="disk" value="10Gib"/>#' \
+           /etc/ImageMagick-6/policy.xml
 
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
