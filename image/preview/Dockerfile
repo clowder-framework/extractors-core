@@ -20,6 +20,8 @@ WORKDIR /extractor
 RUN apt update && apt-get install -y build-essential imagemagick \
     && sed -i -e 's#name="memory" value=".*#name="memory" value="2Gib"/>#' \
               -e 's#name="disk" value=".*#name="disk" value="10Gib"/>#' \
+              -e 's#name="width" value=".*#name="width" value="50KP"/>#' \
+              -e 's#name="height" value=".*#name="height" value="50KP"/>#' \
            /etc/ImageMagick-6/policy.xml
 
 COPY requirements.txt ./
