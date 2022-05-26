@@ -11,21 +11,21 @@ ENV VERSION=${VERSION} \
     RABBITMQ_QUEUE="ncsa.image.preview" \
     IMAGE_BINARY="/usr/bin/convert" \
     IMAGE_TYPE="png" \
+    IMAGE_RESOURCE_MEMORY="4Gib" \
+    IMAGE_RESOURCE_DISK="10Gib" \
+    IMAGE_RESOURCE_PIXELS="50KP" \
     IMAGE_THUMBNAIL_COMMAND="@BINARY@ @INPUT@[0] -auto-orient -resize 225^ @OUTPUT@" \
     IMAGE_PREVIEW_COMMAND="@BINARY@ @INPUT@[0] -auto-orient -resize 800x600 @OUTPUT@" \
     MAGICK_CONFIGURE_PATH='/extractor'
 
 WORKDIR /extractor
 
-RUN apt update && apt-get install -y build-essential imagemagick \
-    && sed -i -e 's#name="memory" value=".*#name="memory" value="2Gib"/>#' \
-              -e 's#name="disk" value=".*#name="disk" value="10Gib"/>#' \
-              -e 's#name="width" value=".*#name="width" value="50KP"/>#' \
-              -e 's#name="height" value=".*#name="height" value="50KP"/>#' \
-           /etc/ImageMagick-6/policy.xml
+RUN apt update && apt-get install -y build-essential imagemagick
 
 COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
-COPY binary_extractor.py extractor_info.json ./
-CMD python binary_extractor.py
+COPY binary_extractor.py extractor_info.json entrypoint.sh ./
+
+ENTRYPOINT ["/extractor/entrypoint.sh"]
+CMD ["extractor"]
