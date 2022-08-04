@@ -110,7 +110,7 @@ jobs:
           fi
 
           # create a list of all images to be pushed
-          IMAGE="extractors-${{ matrix.IMAGE }}"
+          IMAGE="extractors-${{ matrix.name }}"
           IMAGES=""
           for tag in ${tags}; do
             if [ "$DOCKERHUB_PUSH" == "true" ]; then
