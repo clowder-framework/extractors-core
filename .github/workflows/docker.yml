@@ -189,12 +189,3 @@ jobs:
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
           DOCKERHUB_REPOSITORY: ${{ env.DOCKERHUB_ORG }}/extractors-${{ matrix.NAME }}
           README_FILEPATH: ${{ matrix.FOLDER }}/README.md
-
-      # create a new release
-      - name: Create a new release
-        if: github.repository == env.MAIN_REPO && env.BRANCH == 'main'
-        uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "${{ matrix.name }}-${{ env.VERSION }}"
-          title: "${{ matrix.name }} - ${{ env.VERSION }}"
