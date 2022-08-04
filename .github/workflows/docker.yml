@@ -66,6 +66,7 @@ jobs:
           - name: video-preview
             FOLDER: video/preview
             PLATFORM: "linux/amd64,linux/arm64"
+
     steps:
       - uses: actions/checkout@v2
 
@@ -85,7 +86,7 @@ jobs:
           DOCKERHUB_PUSH="false"
           DOCKERHUB_README="false"
           if [ "$BRANCH" == "main" -a "${{ github.repository }}" == "${{ env.MAIN_REPO }}" ]; then
-            if [ "${{ secrets.DOCKERHUB_USERNAME }}" != "" -a "${{ secrets.DOCKERHUB_PASSWORDy }}" != "" ]; then
+            if [ "${{ secrets.DOCKERHUB_USERNAME }}" != "" -a "${{ secrets.DOCKERHUB_PASSWORD }}" != "" ]; then
               DOCKERHUB_PUSH="true"
               if [ -e "${{ matrix.FOLDER }}/README.md" ]; then
                 DOCKERHUB_README="true"
