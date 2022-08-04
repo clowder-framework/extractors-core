@@ -84,7 +84,7 @@ jobs:
           # should we push to dockerhub, and is there a README
           DOCKERHUB_PUSH="false"
           DOCKERHUB_README="false"
-          if [ "${{ env.BRANCH }}" == "main" -a "${{ github.repository }}" == "${{ env.MAIN_REPO }}" ]; then
+          if [ "$BRANCH" == "main" -a "${{ github.repository }}" == "${{ env.MAIN_REPO }}" ]; then
             if [ "${{ secrets.DOCKERHUB_USERNAME }}" != "" -a "${{ secrets.DOCKERHUB_PASSWORDy }}" != "" ]; then
               DOCKERHUB_PUSH="true"
               if [ -e "${{ matrix.FOLDER }}/README.md" ]; then
@@ -106,7 +106,7 @@ jobs:
             done
           else
             VERSION="test"
-            tags="${{ env.BRANCH }}"
+            tags="$BRANCH"
           fi
 
           # create a list of all images to be pushed
