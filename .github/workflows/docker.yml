@@ -34,7 +34,6 @@ jobs:
       matrix:
         name:
           - audio-preview
-#          - audio-speech2text
           - digest
           - image-metadata
           - image-preview
@@ -45,9 +44,6 @@ jobs:
           - name: audio-preview
             FOLDER: audio/preview
             PLATFORM: "linux/amd64,linux/arm64"
-#          - name: audio-speech2text
-#            FOLDER: audio/speech2text
-#            PLATFORM: "linux/amd64,linux/arm64"
           - name: digest
             FOLDER: digest
             PLATFORM: "linux/amd64,linux/arm64"
