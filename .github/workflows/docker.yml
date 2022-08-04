@@ -30,7 +30,7 @@ jobs:
       packages: write
 
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         name:
           - audio-preview
