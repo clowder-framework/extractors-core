@@ -12,6 +12,7 @@ from pyclowder.extractors import Extractor
 from pyclowder.utils import CheckMessage
 import pyclowder.files
 
+clowder_version = os.getenv('CLOWDER_VERSION')
 
 class FileDigestCalculator(Extractor):
     def __init__(self):
@@ -61,6 +62,7 @@ class FileDigestCalculator(Extractor):
 
     def process_message(self, connector, host, secret_key, resource, parameters):
         logger = logging.getLogger('__main__')
+        download_url = pyclowder.files.get_download_url(connector, host, secret_key, resource['id'])
         url = '%sapi/files/%s/blob?key=%s' % (host, resource['id'], secret_key)
 
         # Prepare hash objects
@@ -71,9 +73,9 @@ class FileDigestCalculator(Extractor):
         # stream data and compute hash
         logger.debug("sending request for digest streaming: "+url)
         if os.getenv('STREAM', '').lower() == 'pycurl':
-            self.stream_pycurl(connector, url, hashes)
+            self.stream_pycurl(connector, download_url, hashes)
         else:
-            self.stream_requests(connector, url, hashes)
+            self.stream_requests(connector, download_url, hashes)
 
         # Generate final hex hash
         hash_digest = {}
@@ -85,16 +87,20 @@ class FileDigestCalculator(Extractor):
         for alg in self.hash_list:
             hash_context[alg] = "http://www.w3.org/2001/04/xmldsig-more#%s" % alg
 
-        # store results as metadata
-        metadata = {
-            "@context": ["https://clowder.ncsa.illinois.edu/contexts/metadata.jsonld", hash_context],
-            "dataset_id": resource['parent'].get('id', None),
-            "content": hash_digest,
-            "agent": {
-                "@type": "cat:extractor",
-                "extractor_id": host + "api/extractors/" + self.extractor_info['name']
+        if float(clowder_version) >= 2.0:
+            metadata = self.get_metadata(hash_digest, 'file', resource['id'], host, contexts=[hash_context])
+
+        else:
+            # store results as metadata
+            metadata = {
+                "@context": ["https://clowder.ncsa.illinois.edu/contexts/metadata.jsonld", hash_context],
+                "dataset_id": resource['parent'].get('id', None),
+                "content": hash_digest,
+                "agent": {
+                    "@type": "cat:extractor",
+                    "extractor_id": host + "api/extractors/" + self.extractor_info['name']
+                }
             }
-        }
 
         pyclowder.files.upload_metadata(connector, host, secret_key, resource['id'], metadata)
 
@@ -102,3 +108,4 @@ class FileDigestCalculator(Extractor):
 if __name__ == "__main__":
     extractor = FileDigestCalculator()
     extractor.start()
+
