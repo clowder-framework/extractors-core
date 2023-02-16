@@ -9,7 +9,7 @@ from pyclowder.extractors import Extractor
 import pyclowder.files
 import pyclowder.utils
 
-clowder_version = os.getenv('CLOWDER_VERSION')
+clowder_version = os.getenv('CLOWDER_VERSION', '1.0')
 
 class ImageMetadataExtractor(Extractor):
     """Count the number of characters, words and lines in a text file."""
