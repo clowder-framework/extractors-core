@@ -9,7 +9,6 @@ from pyclowder.extractors import Extractor
 import pyclowder.files
 import pyclowder.utils
 
-clowder_version = os.getenv('CLOWDER_VERSION', '1.0')
 
 class ImageMetadataExtractor(Extractor):
     """Count the number of characters, words and lines in a text file."""
@@ -38,21 +37,10 @@ class ImageMetadataExtractor(Extractor):
         result = self.parse_exif(subprocess.check_output(
             [self.args.image_binary, "-verbose", inputfile], stderr=subprocess.STDOUT).decode("utf-8"))
 
-        if float(clowder_version) >= 2.0:
-            context = {"@vocab": "http://www.w3.org/2003/12/exif/ns"}
-            metadata = self.get_metadata(result, 'file', resource['id'], host, contexts=[context])
-        else:
-            metadata = {
-                "@context": {
-                    "@vocab": "http://www.w3.org/2003/12/exif/ns"
-                },
-                "file_id": file_id,
-                "content": result,
-                "agent": {
-                    "@type": "cat:extractor",
-                    "extractor_id": host + "/api/extractors/ncsa.image.metadata"
-                }
-            }
+        context = {"@vocab": "http://www.w3.org/2003/12/exif/ns"}
+
+        metadata = self.get_metadata(result, 'file', resource['id'], host, contexts=[context])
+
         pyclowder.files.upload_metadata(connector, host, secret_key, file_id, metadata)
 
     def fix_map(self, data):
