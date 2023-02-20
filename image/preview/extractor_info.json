@@ -1,7 +1,7 @@
 {
   "@context": "http://clowder.ncsa.illinois.edu/contexts/extractors.jsonld",
   "name": "ncsa.image.preview",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "description": "Creates thumbnail and image previews of Image files.",
   "author": "Rob Kooper <kooper@illinois.edu>",
   "contributors": [
