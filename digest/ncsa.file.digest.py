@@ -87,20 +87,7 @@ class FileDigestCalculator(Extractor):
         for alg in self.hash_list:
             hash_context[alg] = "http://www.w3.org/2001/04/xmldsig-more#%s" % alg
 
-        if float(clowder_version) >= 2.0:
-            metadata = self.get_metadata(hash_digest, 'file', resource['id'], host, contexts=[hash_context])
-
-        else:
-            # store results as metadata
-            metadata = {
-                "@context": ["https://clowder.ncsa.illinois.edu/contexts/metadata.jsonld", hash_context],
-                "dataset_id": resource['parent'].get('id', None),
-                "content": hash_digest,
-                "agent": {
-                    "@type": "cat:extractor",
-                    "extractor_id": host + "api/extractors/" + self.extractor_info['name']
-                }
-            }
+        metadata = self.get_metadata(hash_digest, 'file', resource['id'], host, contexts=[hash_context])
 
         pyclowder.files.upload_metadata(connector, host, secret_key, resource['id'], metadata)
 
