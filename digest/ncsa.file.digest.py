@@ -12,7 +12,6 @@ from pyclowder.extractors import Extractor
 from pyclowder.utils import CheckMessage
 import pyclowder.files
 
-clowder_version = os.getenv('CLOWDER_VERSION', '1.0')
 
 class FileDigestCalculator(Extractor):
     def __init__(self):
