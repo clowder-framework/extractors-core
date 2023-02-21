@@ -11,9 +11,6 @@ on:
     types:
       - pyclowder  
 
-  schedule:
-    - cron: '0 0 * * *'
-
 # Certain actions will only run when this is the main repo.
 env:
   MAIN_REPO: clowder-framework/extractors-core
@@ -58,4 +55,5 @@ jobs:
         with:
           commit-message: "Updated pyclowder to ${{ env.PYCLOWDER }}"
           title: "Updated pyclowder to ${{ env.PYCLOWDER }}"
-          assignees: robkooper
+          reviewers: robkooper
+          delete-branch: true
