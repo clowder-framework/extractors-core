@@ -61,7 +61,7 @@ class FileDigestCalculator(Extractor):
 
     def process_message(self, connector, host, secret_key, resource, parameters):
         logger = logging.getLogger('__main__')
-        url = '%sapi/files/%s/blob?key=%s' % (host, resource['id'], secret_key)
+        url = '%sapi/files/%s/blob?key=%s&tracking=false' % (host, resource['id'], secret_key)
 
         # Prepare hash objects
         hashes = {}
