@@ -37,17 +37,10 @@ class ImageMetadataExtractor(Extractor):
         result = self.parse_exif(subprocess.check_output(
             [self.args.image_binary, "-verbose", inputfile], stderr=subprocess.STDOUT).decode("utf-8"))
 
-        metadata = {
-            "@context": {
-                "@vocab": "http://www.w3.org/2003/12/exif/ns"
-            },
-            "file_id": file_id,
-            "content": result,
-            "agent": {
-                "@type": "cat:extractor",
-                "extractor_id": host + "/api/extractors/ncsa.image.metadata"
-            }
-        }
+        context = {"@vocab": "http://www.w3.org/2003/12/exif/ns"}
+
+        metadata = self.get_metadata(result, 'file', resource['id'], host, contexts=[context])
+
         pyclowder.files.upload_metadata(connector, host, secret_key, file_id, metadata)
 
     def fix_map(self, data):
