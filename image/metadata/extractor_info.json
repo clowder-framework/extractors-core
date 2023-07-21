@@ -1,11 +1,12 @@
 {
-  "@context": "http://clowder.ncsa.illinois.edu/contexts/extractors.jsonld",
+  "@context": "http://www.w3.org/2003/12/exif/ns",
   "name": "ncsa.image.metadata",
-  "version": "2.1.9",
+  "version": "2.2.0",
   "description": "Extracts metadata from Image files.",
   "author": "Max Burnette <mburnet2@illinois.edu>",
   "contributors": [
-    "Rob Kooper <kooper@illinois.edu>"
+    "Rob Kooper <kooper@illinois.edu>",
+    "Sandeep Puthanveetil Satheesan <sandeeps@illinois.edu>"
   ],
   "contexts": [],
   "repository": [
