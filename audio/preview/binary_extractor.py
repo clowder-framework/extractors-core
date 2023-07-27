@@ -6,13 +6,14 @@ import re
 import subprocess
 import tempfile
 
-from pyclowder.extractors import Extractor
 import pyclowder.files
 import pyclowder.utils
+from pyclowder.extractors import Extractor
 
 
 class BinaryPreviewExtractor(Extractor):
-    """Count the number of characters, words and lines in a text file."""
+    """Generate audio preview and upload to Clowder"""
+
     def __init__(self):
         Extractor.__init__(self)
 
@@ -45,7 +46,7 @@ class BinaryPreviewExtractor(Extractor):
         # parse command line and load default logging configuration
         self.setup()
 
-        # setup logging for the exctractor
+        # setup logging for the extractor
         logging.getLogger('pyclowder').setLevel(logging.DEBUG)
         logging.getLogger('__main__').setLevel(logging.DEBUG)
 
@@ -61,7 +62,7 @@ class BinaryPreviewExtractor(Extractor):
         else:
             args = self.args.image_thumbnail_command
         self.execute_command(connector, host, secret_key, inputfile, file_id, resource, False,
-                             self.args.image_binary, args, self.args.image_type)
+                             self.args.image_binary, args, self.args.image_type, self.extractor_info["name"])
 
         # create preview image
         if 'image_preview' in parameters:
@@ -69,19 +70,21 @@ class BinaryPreviewExtractor(Extractor):
         else:
             args = self.args.image_preview_command
         self.execute_command(connector, host, secret_key, inputfile, file_id, resource, True,
-                             self.args.image_binary, args, self.args.image_type)
+                             self.args.image_binary, args, self.args.image_type, self.extractor_info["name"])
 
-        # create extractor specifc preview
+        # create extractor specific preview
         if 'preview' in parameters:
             args = parameters['preview']
         else:
             args = self.args.preview_command
         self.execute_command(connector, host, secret_key, inputfile, file_id, resource, True,
-                             self.args.preview_binary, args, self.args.preview_type)
+                             self.args.preview_binary, args, self.args.preview_type, self.extractor_info["name"])
 
     @staticmethod
-    def execute_command(connector, host, key, inputfile, fileid, resource, preview, binary, commandline, ext):
+    def execute_command(connector, host, key, inputfile, fileid, resource, preview, binary, commandline, ext,
+                        extractor_name):
         logger = logging.getLogger(__name__)
+        clowder_version = int(os.getenv('CLOWDER_VERSION', '1'))
 
         if binary is None or binary == '' or commandline is None or commandline == '' or ext is None or ext == '':
             return
@@ -109,7 +112,12 @@ class BinaryPreviewExtractor(Extractor):
             if os.path.getsize(tmpfile) != 0:
                 # upload result
                 if preview:
-                    pyclowder.files.upload_preview(connector, host, key, fileid, tmpfile, None)
+                    if clowder_version == 2:
+                        pyclowder.files.upload_preview(connector, host, key, fileid, tmpfile, None, "audio/" + ext,
+                                                       visualization_name=extractor_name,
+                                                       visualization_component_id="basic-audio-component")
+                    else:
+                        pyclowder.files.upload_preview(connector, host, key, fileid, tmpfile, None)
                     connector.status_update(pyclowder.utils.StatusMessage.processing, resource,
                                             "Uploaded preview of type %s" % ext)
                 else:
