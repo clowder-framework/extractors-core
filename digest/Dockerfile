@@ -7,6 +7,7 @@ ARG GITSHA1="unknown"
 # environemnt variables
 ENV VERSION=${VERSION} \
     BUILDNUMBER=${BUILDNUMBER} \
+    CLOWDER_VERSION=1 \
     GITSHA1=${GITSHA1} \
     STREAM=requests \
     RABBITMQ_QUEUE="ncsa.file.digest" \
