@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
-- Audio preview, image preview, and image metadata extractors to support Clowder V2.
+- Audio preview, image preview, image metadata, and file digest extractors to support Clowder V2.
 
 ## 2020-09-16
 
