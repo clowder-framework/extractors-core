@@ -113,7 +113,11 @@ class BinaryPreviewExtractor(Extractor):
                 # upload result
                 if preview:
                     if clowder_version == 2:
-                        pyclowder.files.upload_preview(connector, host, key, fileid, tmpfile, None, "image/" + ext,
+                        logger.debug("tmpfile: %s" % tmpfile)
+                        logger.debug("mimetype: %s" % "image/" + ext)
+
+                        pyclowder.files.upload_preview(connector, host, key, fileid, tmpfile, None,
+                                                       preview_mimetype="image/png",
                                                        visualization_name=extractor_name,
                                                        visualization_component_id="basic-image-component")
                     else:
