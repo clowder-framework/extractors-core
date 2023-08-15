@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import json
 import logging
 import os
 import re
@@ -9,6 +9,7 @@ import tempfile
 import pyclowder.files
 import pyclowder.utils
 from pyclowder.extractors import Extractor
+from requests_toolbelt import MultipartEncoder
 
 
 class BinaryPreviewExtractor(Extractor):
@@ -114,16 +115,88 @@ class BinaryPreviewExtractor(Extractor):
                 if preview:
                     if clowder_version == 2:
                         logger.debug("tmpfile: %s" % tmpfile)
-                        logger.debug("mimetype: %s" % "image/" + ext)
+                        preview_mimetype = "image/" + ext
+                        logger.debug("mimetype: %s" % preview_mimetype)
 
-                        pyclowder.files.upload_preview(connector, host, key, fileid, tmpfile, None,
-                                                       preview_mimetype="image/png",
-                                                       visualization_name=extractor_name,
-                                                       visualization_component_id="basic-image-component")
+                        # pyclowder.files.upload_preview(connector, host, key, fileid, tmpfile, None,
+                        #                                preview_mimetype="image/png",
+                        #                                visualization_name=extractor_name,
+                        #                                visualization_component_id="basic-image-component")
+
+                        visualization_config_id = None
+
+                        if os.path.exists(tmpfile):
+
+                            # upload visualization URL
+                            visualization_config_url = '%s/api/v2/visualizations/config' % host
+
+                            visualization_config_data = dict()
+
+                            payload = json.dumps({
+                                "resource": {
+                                    "collection": "files",
+                                    "resource_id": fileid
+                                },
+                                "client": host,
+                                "parameters": visualization_config_data,
+                                "visualization_mimetype": preview_mimetype,
+                                "visualization_component_id": "basic-image-component"
+                            })
+
+                            headers = {
+                                "X-API-KEY": key,
+                                "Content-Type": "application/json"
+                            }
+
+                            response = connector.post(visualization_config_url, headers=headers, data=payload,
+                                                      verify=connector.ssl_verify if connector else True)
+
+                            if response.status_code == 200:
+                                visualization_config_id = response.json()['id']
+                                logger.debug("Uploaded visualization config ID = [%s]", visualization_config_id)
+                            else:
+                                logger.error("An error occurred when uploading visualization config to file: " + fileid)
+
+                            if visualization_config_id is not None:
+                                logger.debug("Posting visualization bytes")
+
+                                # upload visualization URL
+                                visualization_url = '%s/api/v2/visualizations?name=%s&description=%s&config=%s' % (
+                                    host, extractor_name, "test overwrite pyclowder", visualization_config_id)
+
+                                filename = os.path.basename(tmpfile)
+                                if preview_mimetype is not None:
+                                    multipart_encoder_object = MultipartEncoder(
+                                        fields={'file': (filename, open(tmpfile, 'rb'), preview_mimetype)})
+                                else:
+                                    multipart_encoder_object = MultipartEncoder(
+                                        fields={'file': (filename, open(tmpfile, 'rb'))})
+                                headers = {'X-API-KEY': key,
+                                           'Content-Type': multipart_encoder_object.content_type}
+                                logger.debug("multipart_encoder_object", multipart_encoder_object.content_type)
+                                logger.debug("visualization_url", visualization_url)
+                                logger.debug("connector.ssl_verify", connector.ssl_verify)
+                                response = connector.post(visualization_url, data=multipart_encoder_object,
+                                                          headers=headers,
+                                                          verify=connector.ssl_verify if connector else True,
+                                                          timeout=30) # try add a timeout
+
+                                if response.status_code == 200:
+                                    preview_id = response.json()['id']
+                                    logger.debug("Uploaded visualization data ID = [%s]", preview_id)
+                                else:
+                                    logger.error(
+                                        "An error occurred when uploading the visualization data to file: " + fileid)
+                        else:
+                            logger.error("Visualization data file not found")
+
+                        connector.message_process({"type": "file", "id": fileid}, "Uploading file preview.")
+                        logger = logging.getLogger(__name__)
+
                     else:
                         pyclowder.files.upload_preview(connector, host, key, fileid, tmpfile, None)
-                    connector.status_update(pyclowder.utils.StatusMessage.processing, resource,
-                                            "Uploaded preview of type %s" % ext)
+                        connector.status_update(pyclowder.utils.StatusMessage.processing, resource,
+                                                "Uploaded preview of type %s" % ext)
                 else:
                     pyclowder.files.upload_thumbnail(connector, host, key, fileid, tmpfile)
                     connector.status_update(pyclowder.utils.StatusMessage.processing, resource,
