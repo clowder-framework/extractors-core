@@ -125,6 +125,10 @@ class BinaryPreviewExtractor(Extractor):
 
                         visualization_config_id = None
 
+                        # TODO: not sure why host ends with a slash?
+                        if host.endswith("/"):
+                            host = host[:-1]
+
                         if os.path.exists(tmpfile):
 
                             # upload visualization URL
