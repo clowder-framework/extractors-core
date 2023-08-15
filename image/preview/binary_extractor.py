@@ -125,9 +125,7 @@ class BinaryPreviewExtractor(Extractor):
 
                         visualization_config_id = None
 
-                        # TODO: not sure why host ends with a slash?
-                        if host.endswith("/"):
-                            host = host[:-1]
+                        host = host.rstrip('/')
 
                         if os.path.exists(tmpfile):
 
@@ -177,13 +175,13 @@ class BinaryPreviewExtractor(Extractor):
                                         fields={'file': (filename, open(tmpfile, 'rb'))})
                                 headers = {'X-API-KEY': key,
                                            'Content-Type': multipart_encoder_object.content_type}
-                                logger.debug("multipart_encoder_object", multipart_encoder_object.content_type)
-                                logger.debug("visualization_url", visualization_url)
-                                logger.debug("connector.ssl_verify", connector.ssl_verify)
+                                logger.debug("multipart_encoder_object " +  multipart_encoder_object.content_type)
+                                logger.debug("visualization_url" + visualization_url)
+                                logger.debug("connector.ssl_verify " + str(connector.ssl_verify))
                                 response = connector.post(visualization_url, data=multipart_encoder_object,
                                                           headers=headers,
                                                           verify=connector.ssl_verify if connector else True,
-                                                          timeout=30) # try add a timeout
+                                                          timeout=60) # try add a 60 seconds timeout
 
                                 if response.status_code == 200:
                                     preview_id = response.json()['id']
