@@ -5,13 +5,14 @@ import os
 import re
 import subprocess
 
-from pyclowder.extractors import Extractor
 import pyclowder.files
 import pyclowder.utils
+from pyclowder.extractors import Extractor
 
 
 class ImageMetadataExtractor(Extractor):
     """Count the number of characters, words and lines in a text file."""
+
     def __init__(self):
         Extractor.__init__(self)
 
@@ -35,19 +36,9 @@ class ImageMetadataExtractor(Extractor):
         file_id = resource['id']
 
         result = self.parse_exif(subprocess.check_output(
-            [self.args.image_binary, "-verbose", inputfile], stderr=subprocess.STDOUT).decode("utf-8"))
+            [self.args.image_binary, "-verbose", inputfile], stderr=subprocess.STDOUT).decode("utf-8", errors="ignore"))
 
-        metadata = {
-            "@context": {
-                "@vocab": "http://www.w3.org/2003/12/exif/ns"
-            },
-            "file_id": file_id,
-            "content": result,
-            "agent": {
-                "@type": "cat:extractor",
-                "extractor_id": host + "/api/extractors/ncsa.image.metadata"
-            }
-        }
+        metadata = self.get_metadata(result, 'file', file_id, host)
         pyclowder.files.upload_metadata(connector, host, secret_key, file_id, metadata)
 
     def fix_map(self, data):
@@ -131,8 +122,8 @@ class ImageMetadataExtractor(Extractor):
                         ".*Geometry$",
                         key,
                         flags=re.IGNORECASE) and re.match(
-                        "^\d+x\d+\+\d+\+\d+$",
-                        value):
+                    "^\d+x\d+\+\d+\+\d+$",
+                    value):
                     # Extract width and height from "_Geometry" (e.g "Pagegeometry") property if present.
                     # value must be in format "INTxINT+INT+INT".
                     # Full raw entry will still be added to final result.
@@ -199,7 +190,7 @@ class ImageMetadataExtractor(Extractor):
                 print("Skipping : " + line)
 
         # Add raw source onto the primary dictionary object and return it
-        #data[0]["raw"] = text
+        # data[0]["raw"] = text
         return self.fix_map(data[0])
 
 

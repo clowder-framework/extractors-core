@@ -8,6 +8,7 @@ ARG GITSHA1="unknown"
 ENV VERSION=${VERSION} \
     BUILDNUMBER=${BUILDNUMBER} \
     GITSHA1=${GITSHA1} \
+    CLOWDER_VERSION=1 \
     RABBITMQ_QUEUE="ncsa.image.metadata" \
     IMAGE_BINARY="/usr/bin/identify"
 

@@ -8,6 +8,7 @@ ARG GITSHA1="unknown"
 ENV VERSION=${VERSION} \
     BUILDNUMBER=${BUILDNUMBER} \
     GITSHA1=${GITSHA1} \
+    CLOWDER_VERSION=1 \
     RABBITMQ_QUEUE="ncsa.image.preview" \
     IMAGE_BINARY="/usr/bin/convert" \
     IMAGE_TYPE="png" \

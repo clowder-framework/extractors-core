@@ -3,14 +3,13 @@
 import hashlib
 import logging
 import os
-import requests
-import pycurl
-import certifi
-import json
 
+import certifi
+import pyclowder.files
+import pycurl
+import requests
 from pyclowder.extractors import Extractor
 from pyclowder.utils import CheckMessage
-import pyclowder.files
 
 
 class FileDigestCalculator(Extractor):
@@ -26,7 +25,7 @@ class FileDigestCalculator(Extractor):
         # parse command line and load default logging configuration
         self.setup()
 
-        # setup logging for the exctractor
+        # setup logging for the extractor
         logging.getLogger('pyclowder').setLevel(logging.DEBUG)
         logging.getLogger('__main__').setLevel(logging.DEBUG)
 
@@ -41,13 +40,13 @@ class FileDigestCalculator(Extractor):
         # Stream file and update hashes
         r = requests.get(url, stream=True, verify=connector.ssl_verify if connector else True)
         for chunk in r.iter_content(chunk_size=10240):
-            for hash in hashes.values():
-                hash.update(chunk)
+            for hash_value in hashes.values():
+                hash_value.update(chunk)
 
     def stream_pycurl(self, connector, url, hashes):
         def hash_data(data):
-            for hash in hashes.values():
-                hash.update(data)
+            for hash_value in hashes.values():
+                hash_value.update(data)
 
         c = pycurl.Curl()
         if (connector and not connector.ssl_verify) or (os.getenv("SSL_IGNORE", "").lower() == "true"):
@@ -61,7 +60,8 @@ class FileDigestCalculator(Extractor):
 
     def process_message(self, connector, host, secret_key, resource, parameters):
         logger = logging.getLogger('__main__')
-        url = '%sapi/files/%s/blob?key=%s&tracking=false' % (host, resource['id'], secret_key)
+        file_id = resource['id']
+        url = '%sapi/files/%s/blob?key=%s&tracking=false' % (host, file_id, secret_key)
 
         # Prepare hash objects
         hashes = {}
@@ -69,7 +69,7 @@ class FileDigestCalculator(Extractor):
             hashes[alg] = hashlib.new(alg)
 
         # stream data and compute hash
-        logger.debug("sending request for digest streaming: "+url)
+        logger.debug("sending request for digest streaming: " + url)
         if os.getenv('STREAM', '').lower() == 'pycurl':
             self.stream_pycurl(connector, url, hashes)
         else:
@@ -86,17 +86,8 @@ class FileDigestCalculator(Extractor):
             hash_context[alg] = "http://www.w3.org/2001/04/xmldsig-more#%s" % alg
 
         # store results as metadata
-        metadata = {
-            "@context": ["https://clowder.ncsa.illinois.edu/contexts/metadata.jsonld", hash_context],
-            "dataset_id": resource['parent'].get('id', None),
-            "content": hash_digest,
-            "agent": {
-                "@type": "cat:extractor",
-                "extractor_id": host + "api/extractors/" + self.extractor_info['name']
-            }
-        }
-
-        pyclowder.files.upload_metadata(connector, host, secret_key, resource['id'], metadata)
+        metadata = self.get_metadata(hash_digest, 'file', file_id, host)
+        pyclowder.files.upload_metadata(connector, host, secret_key, file_id, metadata)
 
 
 if __name__ == "__main__":

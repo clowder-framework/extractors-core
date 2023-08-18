@@ -1,10 +1,12 @@
 {
-  "@context": "http://clowder.ncsa.illinois.edu/contexts/extractors.jsonld",
+  "@context": "https://clowderframework.org/contexts/extractors.jsonld",
   "name": "ncsa.audio.preview",
-  "version": "2.1.9",
-  "description": "Creates thumbnail and image previews of Audio files.",
+  "version": "2.2.0",
+  "description": "Creates audio previews.",
   "author": "Rob Kooper <kooper@illinois.edu>",
-  "contributors": [],
+  "contributors": [
+    "Sandeep Puthanveetil Satheesan <sandeeps@illinois.edu>"
+  ],
   "contexts": [],
   "repository": [
     {
