@@ -1,7 +1,7 @@
 {
   "@context": "https://clowderframework.org/contexts/extractors.jsonld",
   "name": "ncsa.audio.preview",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Creates audio previews.",
   "author": "Rob Kooper <kooper@illinois.edu>",
   "contributors": [
