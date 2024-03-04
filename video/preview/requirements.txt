@@ -1,2 +1,2 @@
-pyclowder==3.0.4
+pyclowder==3.0.7
 pycurl==7.43.0.6

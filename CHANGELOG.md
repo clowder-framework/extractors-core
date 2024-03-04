@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Changed
 
 - Audio preview, image preview, image metadata, and file digest extractors to support Clowder V2.
+- Update extractors to use pyclowder 3.0.7
 
 ## 2020-09-16
 
