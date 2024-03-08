@@ -1,0 +1,24 @@
+{
+  "@context": "http://clowder.ncsa.illinois.edu/contexts/extractors.jsonld",
+  "name": "ncsa.text.preview",
+  "version": "1.0",
+  "description": "Given a text file, keep the first 1MB of text.",
+  "author": "Luigi Marini <lmarini@illinois.edu>",
+  "contributors": [],
+  "contexts": [
+  ],
+  "repository": [
+    {
+      "repType": "git",
+      "repUrl": "https://github.com/clowder-framework/extractors-core.git"
+    }
+  ],
+  "process": {
+    "file": [
+      "text/*"
+    ]
+  },
+  "external_services": [],
+  "dependencies": [],
+  "bibtex": []
+}
