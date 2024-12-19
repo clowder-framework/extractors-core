@@ -24,6 +24,9 @@ s3fs clowder /clowderfs \
     -o url=http://${MINIO_ENDPOINT}/ \
     -o allow_other
 
+# Start docker
+dockerd &
+
 # Keep the container running
 exec tail -f /dev/null
 
