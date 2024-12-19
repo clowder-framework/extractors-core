@@ -26,3 +26,6 @@ This docker image requires privileged mode to run. We also need to set up enviro
     depends_on:
       - minio-nginx
 ```
+
+Sources:
+- [docker-s3fs-client](https://github.com/efrecon/docker-s3fs-client/blob/master/docker-compose.yml)
