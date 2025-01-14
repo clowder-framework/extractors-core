@@ -1,7 +1,9 @@
 #!/bin/sh
 
+set -e
+
 # Ensure required environment variables are set
-if [[ -z "${MINIO_ACCESS_KEY}" || -z "${MINIO_SECRET_KEY}" || -z "${MINIO_ENDPOINT}" ]]; then
+if [ -z "${MINIO_ACCESS_KEY}" ] || [ -z "${MINIO_SECRET_KEY}" ] || [ -z "${MINIO_ENDPOINT}" ]; then
     echo "ERROR: MINIO_ACCESS_KEY, MINIO_SECRET_KEY, and MINIO_ENDPOINT must be set."
     exit 1
 fi
@@ -23,6 +25,9 @@ s3fs clowder /clowderfs \
     -o url=http://${MINIO_ENDPOINT}/ \
     -o allow_other
 
+# Wait a moment for the mount to be ready
+sleep 2
 
-# Keep the container running
-exec tail -f /dev/null
+# Execute the command passed to the container
+echo "Mount complete, executing command: $@"
+exec "$@"

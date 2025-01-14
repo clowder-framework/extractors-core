@@ -1,10 +1,11 @@
-FROM python:3.11-alpine
+FROM python:3.10
 
 # Install required packages
-RUN apk add --no-cache \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     fuse \
-    s3fs-fuse \
-    curl    
+    s3fs \
+    curl && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Create mount directory
 RUN mkdir /clowderfs
@@ -18,9 +19,5 @@ COPY entrypoint.sh /entrypoint.sh
 # # Make the script executable
 RUN chmod +x /entrypoint.sh
 
-
-# Set the entrypoint for the container
 ENTRYPOINT ["/entrypoint.sh"]
 
-# Keep the container running
-CMD ["tail", "-f", "/dev/null"] 
