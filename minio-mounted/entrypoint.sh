@@ -1,5 +1,4 @@
 #!/bin/sh
-set -e
 
 # Ensure required environment variables are set
 if [[ -z "${MINIO_ACCESS_KEY}" || -z "${MINIO_SECRET_KEY}" || -z "${MINIO_ENDPOINT}" ]]; then
@@ -24,9 +23,6 @@ s3fs clowder /clowderfs \
     -o url=http://${MINIO_ENDPOINT}/ \
     -o allow_other
 
-# Start docker
-dockerd &
 
 # Keep the container running
 exec tail -f /dev/null
-

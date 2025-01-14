@@ -21,3 +21,6 @@ RUN chmod +x /entrypoint.sh
 
 # Set the entrypoint for the container
 ENTRYPOINT ["/entrypoint.sh"]
+
+# Keep the container running
+CMD ["tail", "-f", "/dev/null"] 
