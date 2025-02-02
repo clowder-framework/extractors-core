@@ -44,7 +44,7 @@ echo "MinIO endpoint is responding!"
 s3fs clowder /clowderfs \
     -o passwd_file=/.miniocred \
     -o use_path_request_style \
-    -o url=http://${MINIO_ENDPOINT}/ \
+    -o url=${MINIO_ENDPOINT}/ \
     -o allow_other
 
 # Wait a moment for the mount to be ready
